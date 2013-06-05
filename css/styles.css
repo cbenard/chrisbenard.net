@@ -12,3 +12,6 @@ div.syntaxhighlighter > table, td, tr {
     border-spacing: none;
 }
 */
+pre {
+    word-break: normal;
+}
