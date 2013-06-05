@@ -1,0 +1,14 @@
+RewriteEngine on
+
+RewriteBase /
+
+RewriteRule ^page/(.*)$ /blog/$1 [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+
+RewriteRule ^.*$ index.php [NC,L]
+
+SetEnv TZ America/Chicago
