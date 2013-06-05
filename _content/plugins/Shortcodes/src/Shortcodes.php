@@ -8,6 +8,7 @@ class Shortcodes extends MarkdownExtra_Parser
     {
         $this->document_gamut += array(
             'doMessageBlocks' => 1,
+            'doCaptionBlocks' => 1,
         );
 
         parent::MarkdownExtra_Parser();
@@ -32,6 +33,91 @@ class Shortcodes extends MarkdownExtra_Parser
         $edited = str_replace('zxcvbasdfgqwerttrewqgfdsabvcxz', "\n", $edited);
 
         return $edited;
+    }
+
+    public function doCaptionBlocks($text)
+    {
+        // [caption id="attachment_437" align="alignright" width="333" caption="iPhone 4s on T-Mobile"]
+        // ...
+        // [/caption]
+        $edited = str_replace("\n", 'zxcvbasdfgqwerttrewqgfdsabvcxz', $text);
+        $edited = str_replace('[/caption]', "[/caption]\n", $edited);
+        preg_match_all('|\[caption([^\]]+)\](.+)\[/caption\]|', $edited, $matches);
+
+        if (empty($matches[0])) {
+            return $text;
+        }
+
+        foreach ($matches[0] as $key => $matched)
+        {
+            $width = null;
+            $alignment = null;
+            $caption = null;
+            $captionClasses = "";
+/*print $matches[1][$key];
+print "<br />";
+print $this->convert_smart_quotes($matches[1][$key]);
+exit;*/
+            preg_match_all("~(\S+)=[\"']?((?:.(?![\"']?\s+(?:\S+)=|[>\"']))+.)[\"']?~",
+                $this->convert_smart_quotes($matches[1][$key]), $innerMatches);
+//var_dump($innerMatches);exit;
+            foreach ($innerMatches[1] as $innerKey => $innerMatched)
+            {
+                if ($innerMatched == "align")
+                    $alignment = $innerMatches[2][$innerKey];
+                if ($innerMatched == "width")
+                    $width = $innerMatches[2][$innerKey];
+                if ($innerMatched == "caption")
+                    $caption = $innerMatches[2][$innerKey];
+            }
+
+            if ($alignment)
+            {
+                switch ($alignment) {
+                    case 'alignright':
+                        $captionClasses .= " pull-right";
+                        break;
+                    case 'aligncenter':
+                        $captionClasses .= " text-center";
+                        break;
+                }
+            }
+
+            $div = "<div class=\"image-caption well {$captionClasses}\"";
+            if ($width)
+                $div .= " style=\"width: {$width}px\"";
+            $div .= '>' . $matches[2][$key];
+            
+            if ($caption)
+            {
+                $div .= '<div class="caption-text text-center">' . $caption . '</div>';
+            }
+            
+            $div .= '</div>';
+
+            $edited = str_replace($matched, $div, $edited);
+        }
+
+        $edited = str_replace('zxcvbasdfgqwerttrewqgfdsabvcxz', "\n", $edited);
+
+        return $edited;
+    }
+
+    protected function convert_smart_quotes($string) 
+    { 
+        $search = array(chr(145), 
+                        chr(146), 
+                        chr(147), 
+                        chr(148), 
+                        chr(151)); 
+     
+        $replace = array("'", 
+                         "'", 
+                         '"', 
+                         '"', 
+                         '-'); 
+     
+        return str_replace($search, $replace, $string); 
     }
 
 	public function _doCodeBlocks_callback($matches) {

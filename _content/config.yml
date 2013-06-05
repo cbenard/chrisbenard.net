@@ -9,4 +9,4 @@ site:
 
 smartypants:
     enable: no
-    use_smartypants_typographer: true
+    use_smartypants_typographer: no

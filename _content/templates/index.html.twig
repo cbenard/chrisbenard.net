@@ -8,10 +8,12 @@
     <!-- Bootstrap -->
     <link href="{{ pcurl('css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
     <link href="{{ pcurl('css/bootstrap-responsive.min.css') }}" rel="stylesheet" media="screen">
-    <!-- Override Styles -->
-    <link rel="stylesheet" type="text/css" href="{{ pcurl('css/styles.css') }}" />
+    <!-- FontAwesome -->
+    <link href="{{ pcurl('css/font-awesome.min.css') }}" rel="stylesheet" media="screen">
     <!-- Google Code Prettify Theme -->
     <link href="{{ pcurl('css/prettify/desert.css') }}" type="text/css" rel="stylesheet" />
+    <!-- Override Styles -->
+    <link rel="stylesheet" type="text/css" href="{{ pcurl('css/styles.css') }}" />
 
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="{{ pcurl('js/bootstrap.min.js') }}"></script>
@@ -23,6 +25,7 @@
 
             $('div.note').not('.alert').addClass('alert alert-info');
             $('div.new').not('.alert').addClass('alert alert-block');
+            //$('.image-caption').not('.well').addClass('well');
         });
     </script>
 	
@@ -45,21 +48,32 @@
   <div id="container">
     <header>
         {% block header %}
-        {% if page.title %}
-        <p class="site-title"><a href="{{ site.root }}">{{ site.title }}</a></p>
-        {% else %}
-        <h1><a href="{{ site.root }}">{{ site.title }}</a></h1>
-        {% endif %}
+        {#
+            {% if page.title %}
+            <p class="site-title"><a href="{{ site.root }}">{{ site.title }}</a></p>
+            {% else %}
+            <h1><a href="{{ site.root }}">{{ site.title }}</a></h1>
+            {% endif %}
+        #}
         {% endblock %}
     </header>
     <section id="main" role="main">
-        {% block main %}
-        {% if page.title %}
-        <h1 class="page-title">{{ page.title }}</h1>
-        {% endif %}
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span10">
+                    {% block main %}
+                    {% if page.title %}
+                    <h1 class="page-title">{{ page.title }}</h1>
+                    {% endif %}
 
-        {{ content|raw }}
-        {% endblock %}
+                    {{ content|raw }}
+                    {% endblock %}
+                </div>
+                <div class="span2">
+                    <h4>Categories and stuff</h4>
+                </div>
+            </div>
+        </div>
     </section>
     <footer>
         {% block footer %}
