@@ -1,0 +1,41 @@
+---
+title: 'Windows Phone Emulator Time Skew When Computer Sleeps'
+id: '409'
+author: 'Chris Benard'
+tags:
+    - Programming
+    - 'c#'
+    - .net
+    - wp7
+    - silverlight
+    - emulator
+category: Programming
+layout: post.html.twig
+time: '18:07:28'
+---
+<div class="note">
+<strong>TLDR:</strong> If you put your computer to sleep, the Windows Phone emulator might have the wrong time when you resume. Restart the emulator to get it to have the current time in its clock.
+</div>
+I was working on <a href="https://github.com/cbenard/SimpleOAuth.Net">my fork of an OAuth library for Windows Phone</a> this weekend, and I ran across a really weird issue. I'm posting this in case someone else Googles this problem, since I couldn't find anything.
+
+I have a UNIX epoch timestamp generator (necessary for Twitter) class that looks like this:
+
+    [code-csharp]
+    public class TimestampGenerator
+    {
+        public string Generate()
+        {
+            var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
+            var now = DateTime.UtcNow;
+
+            long stamp = ((now.Ticks - unixEpoch.Ticks) / 10000000);
+
+            return stamp.ToString();
+        }
+    }
+
+I worked for hours on this on my desktop and everything was working fine. Then, when I did a git pull on my laptop, it was suddenly broken. When I'd make a request to the <a href="http://term.ie/oauth/example/">term.ie example OAuth service</a>, it said my timestamp was expired every time. I set breakpoints and compared it to the <a href="http://www.epochconverter.com/">current epoch timestamp</a>, and it was definitely wrong. I tried many ways of calculating it (that division is to get to seconds from 100 microsecond increments (ticks); I haven't benchmarked to see which is faster), but nothing made a difference.
+
+I calculated a time difference of about 102 hours from my current time based on the timestamps. I finally figured out that my emulator could have the wrong time, since I was thinking computer time == emulator time. I killed the emulator, hit F5, and it worked like a charm. Then, I thought about the time difference, and it was about the last time I put my laptop to sleep by closing its lid.
+
+Apparently, when the computer comes out of sleep, the computer clock stops matching the emulator clock; the emulator clock freezes when the computer sleeps and just resumes from where it left off. I'm not sure if this is a bug or not, or if it happens on a regular basis. I may try to reproduce it later, but probably not.

@@ -1,0 +1,120 @@
+---
+title: 'Enabling SQL Cache Dependency With Schema Solution'
+id: '58'
+author: 'Chris Benard'
+tags:
+    - Programming
+    - 'c#'
+    - sql
+    - cache
+    - dependency
+    - microsoft
+    - linkedin
+category: Programming
+layout: post.html.twig
+time: '15:18:50'
+---
+<div class="new">My solution has now been included in a <a href="http://books.google.com/books?id=ssoOVpzbRkoC&pg=PA168&dq=%22chris+benard%22">published book about ASP.NET for SQL Server</a></div>
+
+This post is about programming and <a href="http://www.asp.net">ASP.NET</a> / <a href="http://www.microsoft.com/sql/">Microsoft SQL Server 2005</a>, so any of my friends who aren't programmers won't find this interesting.  With that said...
+
+If you're reading this post, it's more than likely that you've encountered the "Cannot create trigger 'dbo." error when trying to enable a SQL cache dependency on a table.  I will explain how to fix this.  If you're lazy, skip to the bottom.  If you want to know the source of the problem, continue reading.
+
+  This is the full error text:
+<pre class="brush:plain">C:\Program Files\Microsoft Visual Studio 8\VC>aspnet_regsql -et -E -d DatabaseName -t SchemaName.TableName -S SERVER_NAME
+
+Enabling the table for SQL cache dependency.
+
+.An error has happened.  Details of the exception:
+Cannot create trigger 'dbo.SchemaName.TableName_AspNet_SqlCacheNotification_Trigger' as its schema is different from the schema of the target table or view.
+
+Failed during cache dependency registration.
+
+Please make sure the database name and the table name are valid. Table names must conform to the format of regular identifiers in SQL.
+
+The failing SQL command is:
+dbo.AspNet_SqlCacheRegisterTableStoredProcedure</pre>
+
+The failing stored procedure is provided right there, and I didn't even see that the first time, so I found what it was running in the SQL Profiler.  That was stupid of me, but I still found it.  The offending code in that stored procedure if you go and view it (you must enable the database for caching using "-ed" before you can see the stored procedure) is the following:
+<pre class="brush:sql">
+ALTER PROCEDURE [dbo].[AspNet_SqlCacheRegisterTableStoredProcedure] 
+             @tableName NVARCHAR(450) 
+         AS
+         BEGIN
+         DECLARE @triggerName AS NVARCHAR(3000) 
+         DECLARE @fullTriggerName AS NVARCHAR(3000)
+         DECLARE @canonTableName NVARCHAR(3000) 
+         DECLARE @quotedTableName NVARCHAR(3000) 
+         /* Create the trigger name */ 
+         SET @triggerName = REPLACE(@tableName, '[', '__o__') 
+         SET @triggerName = REPLACE(@triggerName, ']', '__c__') 
+         SET @triggerName = @triggerName + '_AspNet_SqlCacheNotification_Trigger' 
+         SET @fullTriggerName = 'dbo.[' + @triggerName + ']' 
+         /* Create the cannonicalized table name for trigger creation */ 
+         /* Do not touch it if the name contains other delimiters */ 
+         IF (CHARINDEX('.', @tableName) <> 0 OR 
+             CHARINDEX('[', @tableName) <> 0 OR 
+             CHARINDEX(']', @tableName) <> 0) 
+             SET @canonTableName = @tableName 
+         ELSE 
+             SET @canonTableName = '[' + @tableName + ']' 
+         /* First make sure the table exists */ 
+         IF (SELECT OBJECT_ID(@tableName, 'U')) IS NULL 
+         BEGIN 
+             RAISERROR ('00000001', 16, 1) 
+             RETURN 
+         END 
+         BEGIN TRAN
+         /* Insert the value into the notification table */ 
+         IF NOT EXISTS (SELECT tableName FROM dbo.AspNet_SqlCacheTablesForChangeNotification WITH (NOLOCK) WHERE tableName = @tableName) 
+             IF NOT EXISTS (SELECT tableName FROM dbo.AspNet_SqlCacheTablesForChangeNotification WITH (TABLOCKX) WHERE tableName = @tableName) 
+                 INSERT  dbo.AspNet_SqlCacheTablesForChangeNotification 
+                 VALUES (@tableName, GETDATE(), 0)
+         /* Create the trigger */ 
+         SET @quotedTableName = QUOTENAME(@tableName, '''') 
+         IF NOT EXISTS (SELECT name FROM sysobjects WITH (NOLOCK) WHERE name = @triggerName AND type = 'TR') 
+             IF NOT EXISTS (SELECT name FROM sysobjects WITH (TABLOCKX) WHERE name = @triggerName AND type = 'TR') 
+                 EXEC('CREATE TRIGGER ' + @fullTriggerName + ' ON ' + @canonTableName +'
+                       FOR INSERT, UPDATE, DELETE AS BEGIN
+                       SET NOCOUNT ON
+                       EXEC dbo.AspNet_SqlCacheUpdateChangeIdStoredProcedure N' + @quotedTableName + '
+                       END
+                       ')
+         COMMIT TRAN
+         END
+</pre>
+
+The offending code is:
+<pre class="brush:sql">
+SET @fullTriggerName = 'dbo.[' + @triggerName + ']' 
+</pre>
+
+What's happening is that the stored procedures that are created by the aspnet_regsql tool do not handle schemas, which are new to 2005.  It automatically assumes you're using the default schema "dbo".  I've modified Microsoft's stored procedure to be able to handle schemas gracefully.
+
+All you need to do is change the DECLARE block and the "Create the trigger name" blocks to:
+<pre class="brush:sql">
+DECLARE @triggerName AS NVARCHAR(3000) 
+DECLARE @fullTriggerName AS NVARCHAR(3000)
+DECLARE @canonTableName NVARCHAR(3000) 
+DECLARE @quotedTableName NVARCHAR(3000) 
+DECLARE @schemaName NVARCHAR(3000)
+/* Detect the schema name */
+IF CHARINDEX('.', @tableName) <> 0 AND CHARINDEX('[', @tableName) = 0 OR CHARINDEX('[', @tableName) > 1
+    SET @schemaName = SUBSTRING(@tableName, 1, CHARINDEX('.', @tableName) - 1)
+ELSE
+    SET @schemaName = 'dbo'
+/* Create the trigger name */
+IF @schemaName <> 'dbo'
+    SET @triggerName = SUBSTRING(@tableName,
+        CHARINDEX('.', @tableName) + 1, LEN(@tableName) - CHARINDEX('.', @tableName))
+ELSE
+    SET @triggerName = @tableName
+SET @triggerName = REPLACE(@triggerName, '[', '__o__') 
+SET @triggerName = REPLACE(@triggerName, ']', '__c__') 
+SET @triggerName = @triggerName + '_AspNet_SqlCacheNotification_Trigger' 
+SET @fullTriggerName = @schemaName + '.[' + @triggerName + ']'
+</pre>
+
+If you're lazy or you just want to go ahead and fix it, here are links to the full <a href="http://chrisbenard.net/downloads/code/AspNet_SqlCacheRegisterTableStoredProcedure_old.sql">original Microsoft version</a> and <a href="http://chrisbenard.net/downloads/code/AspNet_SqlCacheRegisterTableStoredProcedure_new.sql">my modified version</a> that works.  Just run the code in my modified version after you enable the database and then you should be able to enable any table, including those that have a schema.
+
+If anyone finds problems with these, please let me know.  I tried to test them, but it's possible there might be scenarios for which I've not accommodated.

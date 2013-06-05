@@ -1,0 +1,27 @@
+---
+title: 'A Lesson in How Not to Conduct Website Security'
+id: '326'
+author: 'Chris Benard'
+tags:
+    - Programming
+    - linkedin
+    - security
+    - email
+category: Programming
+layout: post.html.twig
+time: '18:01:18'
+---
+<p><a href="http://www.latech.edu">Louisiana Tech</a> just sent me a “reminder” email with my full username and password in there. That information is everything necessary to logon to the school student portal and get the rest of my personal information, full school transcript, etc.</p>  <p>Not only do I not like them emailing my password, I don’t like that they even know my password. They should be using hashes instead. They’re <a href="http://www.codinghorror.com/blog/archives/000953.html">doing it incorrectly</a>.</p>  <p>Here is the full email (user/pass redacted):</p>  <blockquote style="font-size: 1.5em">   <pre>Subject: Reminder
+TO: &lt;[my.school.email]@LaTech.edu&gt;
+Date: Thu, 11 Feb 10 12:35:23 CST    
+From: &lt;Registrar@LaTech.edu&gt;
+
+REMINDER:
+
+          Your BOSS PIN is: XXXXXX
+          Your CWID number is: 100XXXXXX
+
+PROTECT THESE NUMBERS!</pre>
+</blockquote>
+
+<p>I sure wish they'd protect these numbers for me instead of emailing them to me every quarter.</p>

@@ -1,0 +1,87 @@
+---
+title: 'Zip File Classes Finally Available in .Net 4.5'
+id: '424'
+author: 'Chris Benard'
+tags:
+    - Programming
+    - 'c#'
+    - .net
+    - zip
+    - zipfile
+    - framework
+    - beta
+    - rc
+category: Programming
+layout: post.html.twig
+time: '09:34:41'
+---
+Right now <a href="http://msdn.microsoft.com/en-us/netframework/hh403373">.Net 4.5 is still in beta</a>, but I noticed something that will make developers who must interact with zip files happy: .Net 4.5 will have native support for dealing with zip files. Up until now, the <a href="http://msdn.microsoft.com/en-us/library/system.io.compression.aspx">System.IO.Compression</a> namespace only had support for <a href="http://msdn.microsoft.com/en-us/library/system.io.compression.gzipstream.aspx">GZipStream</a> and <a href="http://msdn.microsoft.com/en-us/library/system.io.compression.deflatestream.aspx">DeflateStream</a>.
+
+I, like many other developers, have been using the fantastic <a href="http://www.icsharpcode.net/opensource/sharpziplib/">SharpZipLib</a> library, but I don't like to have dependencies in my projects if I don't have to. In order to iterate through a zip file and list its contents while extracting the code looks something like this (SharpZipLib has a lot of one-liners to allow for extracting with events as well, but bear with me):
+
+<pre class="brush:csharp">private static void ExtractSharp(string zipFile, string extractionLocationSharp)
+{
+	Console.WriteLine(&quot;Extracting with SharpZipLib&quot;);
+	Console.WriteLine();
+
+	using (var archive = new ZipFile(zipFile))
+	{
+		int readCount;
+		byte[] buffer = new byte[4096];
+
+		foreach (ZipEntry entry in archive)
+		{
+			Console.WriteLine(&quot;Name: {0}, Size: {1}&quot;, entry.Name, entry.Size);
+
+			var extractedPath = Path.Combine(extractionLocationSharp, entry.Name);
+			if (entry.IsDirectory)
+			{
+				Directory.CreateDirectory(extractedPath);
+			}
+			else if (entry.IsFile)
+			{
+				using (var zipStream = archive.GetInputStream(entry))
+				{
+					using (var outputStream = new FileStream(extractedPath, FileMode.CreateNew))
+					{
+						while ((readCount = zipStream.Read(buffer, 0, buffer.Length)) &gt; 0)
+						{
+							outputStream.Write(buffer, 0, readCount);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	Console.WriteLine();
+}</pre>
+
+I haven't installed the .Net 4.5 beta on my work machine yet, but according to the <a href="http://msdn.microsoft.com/en-us/library/system.io.compression.ziparchive(v=vs.110).aspx">MSDN documentation</a>, it should look like this:
+<div class="note">I don't know if this compiles in .Net 4.5. I don't have it installed yet.</div>
+
+<pre class="brush:csharp">private static void ExtractDotNet(string zipFile, string extractionLocationDotNet)
+{
+	Console.WriteLine("Extracting with .Net 4.5");
+	Console.WriteLine();
+
+	using (var archive = ZipFile.OpenRead(zipFile))
+	{
+		foreach (ZipArchiveEntry entry in archive.Entries)
+		{
+			Console.WriteLine("Name: {0}, Size: {1}", entry.FullName, entry.Length);
+
+			var extractedPath = Path.Combine(extractionLocationDotNet, entry.FullName);
+
+			// I'm not sure if it will create the directories or not.
+			// There does not appear to be an IsDirectory or IsFile like in SharpZipLib
+			entry.ExtractToFile(extractedPath);
+		}
+	}
+
+	Console.WriteLine();
+}</pre>
+
+As you can see, it looks a bit cleaner, but the nice part is having it built into the framework instead of relying on yet another assembly.
+
+As noted in the comments, I'm not sure how .Net 4.5 will handle the directory entries or if it ignores them as separate entries. I may be able to test the beta later, but feel free to comment if you know how this works.

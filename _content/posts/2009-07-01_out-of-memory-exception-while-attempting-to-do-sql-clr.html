@@ -1,0 +1,152 @@
+---
+title: 'Out of Memory Exception While Attempting to Do SQL CLR'
+id: '165'
+author: 'Chris Benard'
+tags:
+    - Programming
+    - 'c#'
+    - sql
+    - sqlclr
+    - memory
+    - performance
+    - linkedin
+category: Programming
+layout: post.html.twig
+time: '14:06:37'
+---
+<div class="new"><p><strong>Update:</strong> We figured out how to make it work with the help of our DBA and <a href="http://sqlblog.com/blogs/jonathan_kehayias/">Jonathan Kehayias</a> (see comments). We increased SQL Server’s MEM_TO_LEAVE property, by adjusting the –g command line switch for the service, to 448MB. This increase of the shared memory pool gave SQL Server enough breathing room for its worker threads, and now we are able to return 1536 records in 1 minute 21 seconds, including the Bitmap conversion.</p>  <p>Furthermore, we found a workaround using our reporting engine, which we will implement when we have some breathing room ourselves in our rollout timeline. This will “get it working” for now, which is the requirement handed down from above. Soon though, we will have this working in our application tier, where it belongs.</p></div>  <p>SQL Server’s CLR abilities are really cool. I have done some benchmarking, performing the same computations in both T-SQL and CLR and I have found CLR to outperform T-SQL by factors of greater than 10 to 1. It’s fantastic for this use.</p>  <p>Unfortunately, it has won a battle against me today. I’ll provide a bit of background first. I am currently working on the Point of Sale component of my company’s pharmacy system, and in particular, I am writing all of the code associated with interacting with the signature pad. I’ve abstracted everything nicely, such that we can support multiple pad’s, and I just have to write a .Net class that implements the ISignaturePad interface.</p>  <p>Obviously, other than the navigational aspects of buttons and listboxes and sale line items being displayed on the pad, capturing signatures themselves is paramount. Because each signature pad can spew out the signature data in a different way, and we want to store the “perfect” vector information, I’ve abstracted the signature data into two classes. The Signature and SignaturePoint classes' definitions look like this:</p>  <pre class="brush:csharp">    [Serializable]
+    public partial class Signature
+    {
+        public virtual SignaturePoint[] Points { get; protected set; }
+        public virtual SignaturePoint TopLeft { get; set; }
+        public virtual SignaturePoint BottomRight { get; set; }
+        public int Width
+        {
+            get
+            {
+                return BottomRight.X - TopLeft.X;
+            }
+        }
+        public int Height
+        {
+            get
+            {
+                return BottomRight.Y - TopLeft.Y;
+            }
+        }
+        public int XDpi { get; set; }
+        public int YDpi { get; set; }
+
+        private Signature()
+        {
+        }
+
+        public static Signature CreateFromTT8500String(string signaturePoints)
+        {
+            var sig = new Signature();
+            sig.Points = sig.CreateFromTT8500PointsData(signaturePoints);
+            return sig;
+        }
+
+        public virtual byte[] Serialize()
+        {
+            using (var ms = new MemoryStream())
+            {
+                var bf = new BinaryFormatter();
+                bf.Serialize(ms, this);
+                return ms.ToArray();
+            }
+        }
+
+        public static Signature Deserialize(byte[] serializedSignatureBytes)
+        {
+            using (var ms = new MemoryStream(serializedSignatureBytes))
+            {
+                var bf = new BinaryFormatter();
+                return (Signature)bf.Deserialize(ms);
+            }
+        }
+
+        protected virtual SignaturePoint[] CreateFromTT8500PointsData(string signaturePoints)
+        {
+            List list = new List();
+
+            // Do a lot of work here to change the strange format that we get
+            // as a string into bytes and transform them into an array of my custom class
+
+            return list.ToArray();
+        }
+
+        protected void CropPoints(List list)
+        {
+            foreach (var point in list)
+            {
+                point.X -= TopLeft.X;
+                point.Y -= TopLeft.Y;
+            }
+
+            BottomRight.X -= TopLeft.X;
+            BottomRight.Y -= TopLeft.Y;
+            TopLeft.X = 0;
+            TopLeft.Y = 0;
+        }
+    }
+
+    [Serializable]
+    public class SignaturePoint
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+        public bool PenUp { get; set; }
+
+        public SignaturePoint()
+        {
+        }
+
+        public SignaturePoint(int x, int y)
+            : this(x, y, false)
+        {
+        }
+
+        public SignaturePoint(int x, int y, bool penUp)
+            : this()
+        {
+            X = x;
+            Y = y;
+            PenUp = penUp;
+        }
+
+        public Point ToPoint()
+        {
+            return new Point(X, Y);
+        }
+
+        public override string ToString()
+        {
+            return ToPoint().ToString();
+        }
+    }</pre>
+
+<p>As you might have noticed, Signature is marked as Serializable, and that’s exactly what we’re doing to store the “perfect” information in the database. We call the Serialize() method on my Signature class, and store the resulting byte array in the database as VARBINARY(MAX). It works fine when we pull that back with ADO.NET and re-hydrate a Signature object with my static Deserialize() method.</p>
+
+<p>To actually draw a signature on a picture box on a Windows form for example, we call my ToBitmap() method, that is in another file (partial class), and it generates a bitmap of the requested width, height, and pen width, suitable for display on a receipt, screen, report, etc.</p>
+
+<p>However, as a limitation of our ridiculous reporting engine (and we are currently trying to work around it’s oddities), for an upcoming beta, we are trying to get SQL server to create the bitmaps for passing back up to our reporting engine. Yes, I do know that is application tier logic and shouldn’t be performed at the database level. We are still trying to work around it using custom controls with the reporting engine.</p>
+
+<p>So, I create a SQL CLR scalar function in my Signature class (SqlBytes CreateBitmap(SqlBytes serializedSignatureBytes, SqlInt32 width, SqlInt32 height)), moved Signature and SignaturePoint to a CompanyName.SignaturePad.Common assembly, added a reference to System.Drawing. I added the assembly to SQL Serverand fought it a bit (setting TRUSTWORTHY to ON for the database). I had to manually add System.Drawing as well, because the version on my computer didn’t match exactly on the server, yet another pain and indication I shouldn’t be doing this. And another indication was SQL server warning me that System.Drawing hadn’t been tested and that the universe will indeed explode if they change something in it. I accept the risks, at the moment.</p>
+
+<p>Everything worked great… for 3 signatures. As soon as the 4th signature is added, I get this:</p>
+
+<pre class="brush:plain">Msg 6532, Level 16, State 49, Line 1
+.NET Framework execution was aborted by escalation policy because of out of memory.
+System.Threading.ThreadAbortException: Thread was being aborted.
+System.Threading.ThreadAbortException:
+   at System.Drawing.Graphics.CheckErrorStatus(Int32 status)
+   at System.Drawing.Graphics.DrawImage(Image image, Int32 x, Int32 y, Int32 width, Int32 height)
+   at CompanyName.SignaturePad.Common.Signature.ToBitmap(Int32 width, Int32 height, Int32 penWidth, Color foregroundColor, Color backgroundColor)
+   at CompanyName.SignaturePad.Common.Signature.ToBitmap(Int32 width, Int32 height)
+   at CompanyName.SignaturePad.Common.Signature.CreateBitmap(SqlBytes serializedSignatureBytes, SqlInt32 width, SqlInt32 height)</pre>
+
+<p>Looking at that code, I’m doing everything that I know to do. I’m making sure to Dispose() all Bitmaps, Graphics, Streams, etc. I even tried explicitly setting this to null. SQL Server just runs out of memory after about 3 signatures. I’m not sure if this is a side effect of its execution plan (perhaps forking to multiple workers?).</p>
+
+<p>So… now I’m stuck, and I’m not really sure what to do, until we get a workaround in the reporting engine, which someone else is currently working on. I’ll update this post if we get a working solution.</p>

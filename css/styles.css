@@ -1,0 +1,14 @@
+/*
+div.syntaxhighlighter > pre, code {
+    border: none;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    padding: 0;
+}
+
+div.syntaxhighlighter > table, td, tr {
+    border-collapse: inherit;
+    border: 0;
+    border-spacing: none;
+}
+*/

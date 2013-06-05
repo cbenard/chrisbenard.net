@@ -1,0 +1,139 @@
+---
+title: 'Hosting Windows Workflow Foundation in a Console Application without Ugly Code'
+id: '350'
+author: 'Chris Benard'
+tags:
+    - Programming
+    - 'c#'
+    - linkedin
+    - Personal
+    - 'workflow foundation'
+    - wf
+category: Programming
+layout: post.html.twig
+time: '12:45:43'
+---
+<p>I’ve been using <a href="http://msdn.microsoft.com/en-us/netframework/aa663328.aspx">Windows Workflow Foundation</a> for a small personal project to learn more about it and see what it can do. It’s pretty powerful and I’m looking forward to delving more into it. For my purposes though, I’m hosting the workflow in a console program.</p>  <p>If you look around the internet, you’ll see lots of examples of hosting a sequential workflow in a synchronous manner, even though the <span style="font-family: andale mono, monospace">WorkflowRuntime</span> only support asynchronous operations. That code usually looks like this (example adapted from <a href="http://www.wf-training-guide.com/workflow-runtime-engine.html">wf-training-guide.com</a> to add support for input/output arguments):</p>  <pre style="font-size: 1.1em" class="brush:csharp">static void Main(string[] args)
+{
+  Dictionary&lt;string, object&gt; inputArguments = new Dictionary&lt;string, object&gt;();
+  inputArguments.Add(&quot;Argument1&quot;, args[0]);
+  Dictionary&lt;string, object&gt; outputArguments;
+    
+  // Create the WF runtime.
+  using(WorkflowRuntime workflowRuntime = new WorkflowRuntime())
+  {
+    // Hook into WorkflowCompleted / WorkflowTerminated events.
+    AutoResetEvent waitHandle = new AutoResetEvent(false);
+    workflowRuntime.WorkflowCompleted
+      += delegate(object sender, WorkflowCompletedEventArgs e)
+        {
+          outputArguments = e.OutputParameters;
+          waitHandle.Set();
+        };
+
+    workflowRuntime.WorkflowTerminated
+      += delegate(object sender, WorkflowTerminatedEventArgs e)
+        {
+          Console.WriteLine(e.Exception.Message);
+          waitHandle.Set();
+        };
+
+    // Create an instance of the WF to execute and call Start().
+    WorkflowInstance instance =
+      workflowRuntime.CreateWorkflow(typeof(WorkflowClass));
+    instance.Start();
+
+    waitHandle.WaitOne();
+  }
+}</pre>
+
+<p>Unfortunately, that’s a ton of code to do only a few things:</p>
+
+<ol>
+  <li>Take input arguments </li>
+
+  <li>Instantiate a <span style="font-family: andale mono, monospace">WorkflowRuntime</span> </li>
+
+  <li>Create a workflow instance </li>
+
+  <li>Run the workflow </li>
+
+  <li>Handle any exceptions (poorly) </li>
+
+  <li>Return output parameters from the workflow </li>
+
+  <li>Do all of this in a synchronous manner. </li>
+</ol>
+
+<p>What if we could just call a method similar to this:</p>
+
+<pre style="font-size: 1.1em" class="brush:csharp">var outputArguments = RunWorkflow&lt;WorkflowClass&gt;(arguments, completedEvent, terminatedEvent);</pre>
+
+<p>Well, now you can! I’ve written this wrapper class to allow exactly that:</p>
+
+<pre style="font-size: 1.1em" class="brush:csharp">public class WorkflowManager
+{
+  public static Dictionary&lt;string, object&gt; RunWorkflow&lt;T&gt;(
+    Dictionary&lt;string, object&gt; arguments,
+    EventHandler&lt;WorkflowCompletedEventArgs&gt; completedEvent,
+    EventHandler&lt;WorkflowTerminatedEventArgs&gt; terminatedEvent)
+    where T : SequentialWorkflowActivity
+  {
+    using (WorkflowRuntime runtime = new WorkflowRuntime())
+    {
+      Dictionary&lt;string, object&gt; returnValue = null;
+      Exception ex = null;
+
+      using (AutoResetEvent waitHandle = new AutoResetEvent(false))
+      {
+        WorkflowInstance instance = runtime.CreateWorkflow(typeof(T), arguments);
+        runtime.WorkflowCompleted += (o, e) =&gt;
+        {
+          EventHandler&lt;WorkflowCompletedEventArgs&gt; temp = completedEvent;
+          if (temp != null)
+          {
+            temp(o, e);
+          }
+
+          returnValue = e.OutputParameters;
+
+          waitHandle.Set();
+        };
+
+        runtime.WorkflowTerminated += (o, e) =&gt;
+        {
+          EventHandler&lt;WorkflowTerminatedEventArgs> temp = terminatedEvent;
+          if (temp != null)
+          {
+            temp(o, e);
+          }
+
+          ex = e.Exception;
+
+          waitHandle.Set();
+        };
+
+        instance.Start();
+        waitHandle.WaitOne();
+      }
+
+      if (runtime != null)
+      {
+        runtime.StopRuntime();
+      }
+
+      if (ex != null)
+      {
+        throw ex;
+      }
+
+      return returnValue;
+    }
+  }
+}</pre>
+
+<p>Now you really can run the above code to execute your workflow in a synchronous manner without all kinds of messy code. Beware creating multiple <span style="font-family: andale mono, monospace">WorkflowRuntime</span> instances though. If you are managing multiple simultaneous workflows, you'll need to pass in instance IDs and keep track in the runtime of which one is completing or throwing errors. It's generally a bad idea to have multiple <span style="font-family: andale mono, monospace">WorkflowRuntime</span>s.</p>
+
+<p>Enjoy now being able to write:</p>
+
+<pre style="font-size: 1.1em" class="brush:csharp">var outputArguments = RunWorkflow&lt;WorkflowClass&gt;(arguments, completedEvent, terminatedEvent);</pre>

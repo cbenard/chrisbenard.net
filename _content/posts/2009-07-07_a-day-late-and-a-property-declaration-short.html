@@ -1,0 +1,91 @@
+---
+title: 'A Day Late and a Property Declaration Short'
+id: '182'
+author: 'Chris Benard'
+tags:
+    - Programming
+    - 'c#'
+    - Work
+    - 'auto-implemented properties'
+    - property
+    - properties
+    - linkedin
+category: Programming
+layout: post.html.twig
+time: '08:32:25'
+---
+<p>I know this is a bit late to the game, but this morning, as I’m refactoring a bunch of old code to be shared with a new project, I’m cleaning up the C# 2.0 property declarations we all know and love:</p>  <pre class="brush:csharp">    public class SaleResponse : Response
+    {
+        protected bool _addressVerificationSuccess;
+        public virtual bool AddressVerificationSuccess
+        {
+            [DebuggerStepThrough]
+            get { return _addressVerificationSuccess; }
+            [DebuggerStepThrough]
+            set { _addressVerificationSuccess = value; }
+        }
+
+        protected bool _cvvVerificationSuccess;
+        public virtual bool CvvSuccess
+        {
+            [DebuggerStepThrough]
+            get { return _cvvVerificationSuccess; }
+            [DebuggerStepThrough]
+            set { _cvvVerificationSuccess = value; }
+        }
+
+        protected string _authorizationCode = string.Empty;
+        public virtual string AuthorizationCode
+        {
+            [DebuggerStepThrough]
+            get { return _authorizationCode; }
+            [DebuggerStepThrough]
+            set { _authorizationCode = value; }
+        }
+
+        protected string _referenceNumber = string.Empty;
+        public virtual string ReferenceNumber
+        {
+            [DebuggerStepThrough]
+            get { return _referenceNumber; }
+            [DebuggerStepThrough]
+            set { _referenceNumber = value; }
+        }
+
+        protected decimal? _authorizedAmount;
+        public virtual decimal? AuthorizedAmount
+        {
+            [DebuggerStepThrough]
+            get { return this._authorizedAmount; }
+            [DebuggerStepThrough]
+            set { this._authorizedAmount = value; }
+        }
+    }</pre>
+
+<p>This code is, of course because I wrote it, wonderful and has no flaws, and I used the prop snippet to create the private variable and public property getter and setter. However, I have all those DebuggerStepThrough attributes in there, due to the lovely fun of stepping through code that references properties. That avoids stepping in and out of the property declarations.</p>
+
+<p>Thank the flying spaghetti monster that now, in C# 3.0 (and of course 3.5, 4.0 and on), Microsoft has given us <a href="http://msdn.microsoft.com/en-us/library/bb384054.aspx">auto-implemented properties</a>. This is now the equivalent code, avoiding the stepping in/out of the get/set and not requiring the declaration of a private variable:</p>
+
+<pre class="brush:csharp">    public class SaleResponse : Response
+    {
+        public virtual bool AddressVerificationSuccess { get; set; }
+        public virtual bool CvvSuccess { get; set; }
+        public virtual string AuthorizationCode { get; set; }
+        public virtual string ReferenceNumber { get; set; }
+        public virtual decimal? AuthorizedAmount { get; set; }
+    }</pre>
+
+<p>When I first learned this trick, I was extremely thankful to be able to do this as an even shorter shortcut to using the prop snippet and it makes the code a lot prettier. What I didn’t immediately realize is how to control scoping. Let’s say, for instance, I want that AuthorizationCode property to only be able to be set from inside the class itself, and I only want the AuthorizedAmount property to be able to get set from inside the class and inherited classes. I can then change those declarations like this:</p>
+
+<pre class="brush:csharp">    public class SaleResponse : Response
+    {
+        public virtual bool AddressVerificationSuccess { get; set; }
+        public virtual bool CvvSuccess { get; set; }
+        // This can now only be set from inside the class
+        public virtual string AuthorizationCode { get; private set; }
+        public virtual string ReferenceNumber { get; set; }
+        // This can now only be set from inside the class and those that inherit from it
+        public virtual decimal? AuthorizedAmount { get; protected set; }
+    }</pre>
+
+<p>This allows you to control the scoping of the getter and setter independently. By default, they inherit the visibility of the property declaration, in this case, public for all. I’m always thankful for the tools Microsoft gives me to make my life easier and to give me more time to spend on the actual work, rather than installing plumbing.</p>

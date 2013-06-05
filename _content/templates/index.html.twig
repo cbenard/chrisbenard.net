@@ -1,0 +1,53 @@
+<!doctype html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="{{ site.description }}">
+    <meta name="author" content="{{ site.author }}">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{{ site.title }}{% if page.title %} &mdash; {{ page.title }}{% endif %}</title>
+    <!-- Bootstrap -->
+    <link href="{{ pcurl('css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ pcurl('css/bootstrap-responsive.min.css') }}" rel="stylesheet" media="screen">
+    <!-- Override Styles -->
+    <link rel="stylesheet" type="text/css" href="{{ pcurl('css/styles.css') }}" />
+    <!-- Google Code Prettify Theme -->
+    <link href="{{ pcurl('css/prettify/desert.css') }}" type="text/css" rel="stylesheet" />
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="{{ pcurl('js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ pcurl('js/prettify/prettify.js') }}"></script>
+    <script type="text/javascript">
+        $(function() {
+            $('pre').not('.prettyprint').filter('[class^=brush]').addClass('prettyprint linenums');
+            prettyPrint();
+        });
+    </script>
+</head>
+<body>
+  <div id="container">
+    <header>
+        {% block header %}
+        {% if page.title %}
+        <p class="site-title"><a href="{{ site.root }}">{{ site.title }}</a></p>
+        {% else %}
+        <h1><a href="{{ site.root }}">{{ site.title }}</a></h1>
+        {% endif %}
+        {% endblock %}
+    </header>
+    <section id="main" role="main">
+        {% block main %}
+        {% if page.title %}
+        <h1 class="page-title">{{ page.title }}</h1>
+        {% endif %}
+
+        {{ content|raw }}
+        {% endblock %}
+    </section>
+    <footer>
+        {% block footer %}
+        {% endblock %}
+        <p>{{ piecrust.branding|raw }}</p>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+---
+title: 'Kindly Remove My Rootkit'
+id: '189'
+author: 'Chris Benard'
+tags:
+    - rootkit
+    - virus
+    - combofix
+    - usenet
+    - newzbin
+    - avg
+    - antivirus
+    - nod32
+    - winrar
+    - rar
+    - sabnzbd
+    - nzbtv
+layout: post.html.twig
+category: Personal
+time: '10:49:19'
+---
+<a title="Rootkit Activity Detected" href="http://www.flickr.com/photos/16735090@N00/3700818131/"><img style="margin: 0px 0px 5px 5px" src="http://farm3.static.flickr.com/2474/3700818131_0a522628bd_m.jpg" border="0" alt="Rootkit Activity Detected" align="right" /></a>It would seem that even being a somewhat responsible computer user can’t stop you from getting a <a href="http://en.wikipedia.org/wiki/Rootkit">rootkit</a>. Last Night, my computer, using <a href="http://www.two-sided.com/">nzbtv</a> and <a href="http://www.newzbin.com">Newzbin</a>, <a href="https://www.newzbin.com/browse/post/5060529/">downloaded</a> from <a href="http://chrisbenard.net/usenet">USENET</a>, for my girlfriend, what it believed to be <span style="text-decoration: line-through;">True Blood</span> the latest episode of a publicly released television show from its rightful copyright holder. When <a href="http://www.sabnzbd.org/">sabnzbd</a> was done extracting it, I was left with a .exe and a bunch of <a href="http://en.wikipedia.org/wiki/RAR">RAR</a> files. It appeared to be a self-extracting archive that <a href="http://www.rarlab.com">WinRAR</a> created, but I was suspicious. So, like any good little boy would do before running files from an untrusted medium, I scanned the file with <a href="http://free.avg.com/">AVG</a>.
+
+AVG detected no viruses or suspicious behavior at all, so I took that as a bill of good health… my mistake. The file did actually extract a video, which was the previous week’s episode. I thought everything was still fine, but a few seconds later, AVG Resident Shield started popping up saying all kinds of files that start with hjgrui*.dll were infected in my C:\Windows\System32 directory. I went back to <a href="https://www.newzbin.com/browse/post/5060529/">the post on Newzbin</a> and sure enough it was then tagged SPAM/VIRUS with all kinds of comments on it; I wish I had checked the community’s reaction first. Apparently <a href="http://www.eset.com/">Nod32</a> was detecting the virus for its lucky users. Another user said he fell into the same trap as me and “should have known better,” but that he got rid of it with <a href="http://www.combofix.org/">ComboFix</a>.
+
+I ran ComboFix in safe mode and it popped up the <a href="http://www.flickr.com/photos/cbenard/3700818131/">dialog</a> you see here in the post (click to make it larger). The title of this post comes from the sentence in the dialog that reads: “Kindly note down on paper, the name of each file.” Grammatically incorrect sentences that sound like little old ladies wrote them crack me up when juxtaposed with a rootkit detection warning. ComboFix was able to completely remove the infection and AVG Resident Shield no longer shows any traces, but it makes me uncomfortable running a previously compromised machine. I’m going to upgrade to <a href="http://windows.microsoft.com/en-US/windows7/products/home?os=nonwin7">Windows 7</a> as soon as it’s released and do a clean install.
+
+I’m not sure what the dolts who make and post this kind of crap get out of it, unless it’s some sick version of computer <a href="http://en.wikipedia.org/wiki/Schadenfreude">schadenfreude</a>, but my guess is that its to make computers into <a href="http://en.wikipedia.org/wiki/Botnet">botnets</a> for attacks/spam, something of which I’d like no part. This just goes to show, even an experienced software developer is capable of accidentally installing a rootkit trojan, so never be complacent and never let down your guard when dealing with untrusted sources. When in question, just don’t run it, even if it promises to be something you want. Do as I say, not as I’ve done.

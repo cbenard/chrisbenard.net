@@ -1,0 +1,21 @@
+---
+title: 'Beyonc□, or How We Can All Learn From Other Developers'' Character Encoding Mistakes'
+id: '271'
+author: 'Chris Benard'
+tags:
+    - Programming
+    - 'c#'
+    - linkedin
+    - .net
+    - unicode
+    - 'character encoding'
+    - ebcdic
+    - ascii
+    - utf-8
+    - utf-16
+    - t-shirt
+category: Programming
+layout: post.html.twig
+time: '13:58:08'
+---
+<p><img style="border-bottom: 0px; border-left: 0px; margin: 0px 15px 30px 4px; display: inline; border-top: 0px; border-right: 0px" title="Picture of Unicode Error, displaying Beyoncé as Beyonc□" border="0" alt="Picture of Unicode Error, displaying Beyoncé as Beyonc-block" align="left" src="http://chrisbenard.net/wp-content/uploads/2009/08/beyoncblock.png" width="189" height="710" /> </p>  <p>I’m sure everyone who reads this blog has noticed, at some point, the result of another developer’s mistake in dealing with <a href="http://en.wikipedia.org/wiki/Unicode">Unicode</a> or other <a href="http://en.wikipedia.org/wiki/Character_encoding">character encodings</a>. I’ve had a few issues myself. To the left, you can see how my Napster displayed a <a href="http://en.wikipedia.org/wiki/Beyonc%C3%A9_Knowles">Beyoncé</a> song as Beyonc□. You may have seen a <a href="http://www.cybervaldez.com/how-to-remove-those-nasty-question-mark-with-a-diamond-symbols-from-appearing-in-your-website/2009/">black diamond symbol with a question mark in it</a> while browsing a web page, or perhaps other strange symbols when interacting with programs or web pages.</p>  <p>Most, if not all of these, are inconsistencies when dealing with character encoding, with most of them being Unicode. Hazarding a guess, Beyoncé’s is likely stored as Unicode (<a href="http://en.wikipedia.org/wiki/UTF-16/UCS-2">UTF-16</a>) in <a href="http://www.napster.com">Napster</a>’s database, but when output on the screen, it is converted down to <a href="http://en.wikipedia.org/wiki/UTF-8">UTF-8</a> or <a href="http://en.wikipedia.org/wiki/ASCII">ASCII</a>. Either way, it can’t be converted down, so an entity is displayed. There is even a <a href="http://blogs.msdn.com/michkap/archive/2005/09/11/463670.aspx">shirt memorializing the problem</a> in T-shirt form:</p>  <p><a title="I {entity} Unicode T-shirts!" href="http://blogs.msdn.com/michkap/archive/2005/09/11/463670.aspx"><img style="border-right-width: 0px; margin: 5px auto; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="I {entity} Unicode T-shirt" border="0" alt="I {entity} Unicode T-shirt" src="http://chrisbenard.net/wp-content/uploads/2009/08/UnicodeWindows.jpg" width="244" height="244" /></a> </p>  <p>My issues have been even more low-level than this. I deal with a lot of interaction using <a href="http://en.wikipedia.org/wiki/Electronic_Data_Interchange">EDI</a> with older computer systems running UNIX or or some IBM mainframe OS. None of these are using Unicode for their medical claims adjudication, and are either using ASCII or <a href="http://en.wikipedia.org/wiki/Extended_Binary_Coded_Decimal_Interchange_Code">EBCDIC</a>. Yes, EBCDIC; I have to program using EBCDIC in 2009.</p>  <p>I have to be very careful when I’m converting to and from Unicode, the <a href="http://www.yoda.arachsys.com/csharp/unicode.html">native format of the string class in .Net</a>, and other character encodings such as ASCII and EBCDIC, and so should you.</p>  <br style="clear: both" />

@@ -1,0 +1,11 @@
+---
+title:
+layout: index.html.twig
+format: none
+---
+
+{% for post in blog.posts.limit(3) %}
+    {% include 'partial_post.html.twig' %}
+
+    {% if not loop.last %}<hr />{% endif %}
+{% endfor %}

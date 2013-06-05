@@ -1,0 +1,90 @@
+---
+title: 'Using Reflection to Dynamically Generate ToString() Output'
+id: '246'
+author: 'Chris Benard'
+tags:
+    - Programming
+    - 'c#'
+    - Work
+    - linkedin
+    - reflection
+    - 'Visual Studio'
+    - 'immediate window'
+    - debugging
+    - logging
+category: Programming
+layout: post.html.twig
+time: '11:11:46'
+---
+<p class="new"><strong>Update:</strong> Added code to show “null” when a property is null, like Visual Studio does.</p>  <p>If you’ve ever used <a href="http://www.microsoft.com/visualstudio/en-us/products/2010/default.mspx">Visual Studio</a> in any iteration in any language, you have most likely used the immediate window. It’s insanely useful and lets you just type an instance of an object and if the object doesn’t have an overridden <a href="http://msdn.microsoft.com/en-us/library/system.object.tostring.aspx">ToString() method</a> (I’m back in C#/.Net world here for the purposes of this post), Visual Studio will dynamically generate output for you, so that you can see the current state of the object.</p>  <p>Here is what Visual Studio’s output looks like on an object I have:</p>  <pre class="brush:plain">{CompanyName.CreditCard.Processor.CreditDebit.SaleResponse}
+    base {CompanyName.CreditCard.Processor.Response}: {CompanyName.CreditCard.Processor.CreditDebit.SaleResponse}
+    AddressVerificationSuccess: true
+    AuthorizationCode: null
+    AuthorizedAmount: 50
+    CvvSuccess: false
+    ReferenceNumber: null</pre>
+
+<p>However, what if you want to be able to have ToString() generate this type of output for you, for the purposes of debugging, like using with <a href="http://msdn.microsoft.com/en-us/library/system.diagnostics.debug.writeline.aspx">Debug.WriteLine</a> or Trace or any other logging framework? It is useful to be able to see later what the state of an object was during a problem situation. Sure, you can write your own ToString() code in every object to generate its state in string form, and then aggregate all the base objects using base.ToString(), but that is a lot of iterative, repetitious coding.</p>
+
+<p>My classes are simple <a href="http://en.wikipedia.org/wiki/Data_transfer_object">data transfer objects</a> and look like this:</p>
+
+<pre class="brush:csharp">public class SaleResponse : Response
+{
+    public virtual bool AddressVerificationSuccess { get; set; }
+    public virtual bool CvvSuccess { get; set; }
+    public virtual string AuthorizationCode { get; set; }
+    public virtual string ReferenceNumber { get; set; }
+    public virtual decimal? AuthorizedAmount { get; set; }
+}
+
+public class Response
+{
+    public virtual bool Success { get; set; }
+    public virtual string ResponseMessage { get; set; }
+    public virtual string TransactionID { get; set; }
+    public virtual string GatewayResponseCodeText { get; set; }
+    public virtual string IssuerResponseCodeText { get; set; }
+    public virtual GatewayResponseCode GatewayResponseCode { get; set; }
+    public virtual IssuerResponseCode IssuerResponseCode { get; set; }
+}</pre>
+
+<p>As you can see, Visual Studio didn’t even give me the contents of the base class, but I want this information. My ToString() method I’ve created in the SaleResponse object is the following:</p>
+
+<pre class="brush:csharp">public override string ToString()
+{
+    var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.FlattenHierarchy;
+    System.Reflection.PropertyInfo[] infos = this.GetType().GetProperties(flags);
+
+    StringBuilder sb = new StringBuilder();
+
+    string typeName = this.GetType().Name;
+    sb.AppendLine(typeName);
+    sb.AppendLine(string.Empty.PadRight(typeName.Length + 5, '='));
+
+    foreach (var info in infos)
+    {
+        object value = info.GetValue(this, null);
+        sb.AppendFormat(&quot;{0}: {1}{2}&quot;, info.Name, value != null ? value : &quot;null&quot;, Environment.NewLine);
+    }
+
+    return sb.ToString();
+}</pre>
+
+<p>Which generates the following output:</p>
+
+<pre class="brush:plain">SaleResponse
+=================
+AddressVerificationSuccess: True
+CvvSuccess: False
+AuthorizationCode: null
+ReferenceNumber: null
+AuthorizedAmount: 50
+Success: True
+ResponseMessage: null
+TransactionID: AXB234234
+GatewayResponseCodeText: null
+IssuerResponseCodeText: null
+GatewayResponseCode: ExpiredDevice
+IssuerResponseCode: Error</pre>
+
+<p>What I like about this approach is that it grabs all the base object’s properties recursively. Obviously, there are <a href="http://www.west-wind.com/weblog/posts/351.aspx">performance concerns</a> with doing reflection, so I wouldn’t use this constantly, but I think it’s a good way to write out the state of an object in the event of an error. Also, I made the example simple for this blog post, but obviously, you could put that code into an <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">extension method</a> for <a href="http://msdn.microsoft.com/en-us/library/system.object.aspx">System.Object</a> or just into a static utility class, adding an object parameter and replacing “this” with the name of the object parameter.</p>

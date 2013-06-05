@@ -1,0 +1,23 @@
+---
+title: 'Accessing a Control Without Being Able to See It on a Windows Form'
+id: '258'
+author: 'Chris Benard'
+tags:
+    - Programming
+    - 'c#'
+    - Work
+    - linkedin
+    - 'Visual Studio'
+    - coworker
+    - windows
+    - forms
+    - 'windows forms'
+category: Programming
+layout: post.html.twig
+time: '11:17:08'
+---
+<p><img style="border-right-width: 0px; margin: 0px 0px 0px 5px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="Menu Key Displayed on Keyboard" border="0" alt="Menu Key Displayed on Keyboard" align="right" src="http://chrisbenard.net/wp-content/uploads/2009/07/menukey.png" width="269" height="168" />A <a title="Jenny Roe" href="http://jennyroe.com">coworker of mine</a> had a problem and came to me for help. She had a windows form with a control on it that she wanted to edit or delete, but couldn’t see the control. It was listed in the properties box in the list of controls on the form, but when she selected it, she wasn’t able to click it on the form, because it was behind another control.</p>  <p>I hypothesized a solution, which worked, but requires the use of a less than frequent key on your keyboard, the <a href="http://en.wikipedia.org/wiki/Menu_key">menu key.</a> Usually this key is two keys to the right of the space bar on windows keyboards, between Alt and Control. A picture of it is on the right.</p>
+
+<p style="clear:both" class="note"><strong>Note: </strong>As pointed out by Lee, in the comments, you can press Shift + F10 if your keyboard doesn't contain the Menu Key.</p>
+
+<h3 style="clear: both">The Form With a Hidden Label Behind the Filename TextBox) <img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; margin-left: 0px; border-left-width: 0px; margin-right: 0px" title="Form with hidden label control" border="0" alt="Form with hidden label control" align="left" src="http://chrisbenard.net/wp-content/uploads/2009/07/notthere.jpg" width="484" height="137" /></h3>  <h3 style="clear: both">Properties Window Listing the Hidden Control, HiddenLabel</h3>  <p><img style="border-right-width: 0px; margin: 0px 5px 0px 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="Properties window list of controls" border="0" alt="Properties window list of controls" align="left" src="http://chrisbenard.net/wp-content/uploads/2009/07/list.jpg" width="349" height="206" /></p>  <p>Select the control that you can’t see. It will be highlighted on the form.</p>  <h3 style="clear: both">Form with Hidden Control Highlighted</h3>  <p><img style="border-right-width: 0px; margin: 0px 5px 0px 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="Label highlighted after selecting from properties window" border="0" alt="Label highlighted after selecting from properties window" align="left" src="http://chrisbenard.net/wp-content/uploads/2009/07/highlighted.jpg" width="479" height="134" />The hidden control becomes highlighted. Click into the title bar of the form. Press the menu key on your keyboard to display the context menu.</p>  <h3 style="clear: both">Context Menu Being Displayed After Pressing the Menu Key</h3>  <p><a href="http://chrisbenard.net/wp-content/uploads/2009/07/bringtofront.png"><img style="border-right-width: 0px; margin: 0px 5px 0px 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="bringtofront" border="0" alt="bringtofront" align="left" src="http://chrisbenard.net/wp-content/uploads/2009/07/bringtofront_thumb.png" width="474" height="361" /></a>Select “Bring to Front” to display the control. It will now be visible and can be edited or removed.</p>  <h3 style="clear: both">Hidden Control Moved</h3>  <p><img style="border-right-width: 0px; margin: 0px 5px 0px 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="Label after being brought to front and moved" border="0" alt="Label after being brought to front and moved" align="left" src="http://chrisbenard.net/wp-content/uploads/2009/07/moved.jpg" width="485" height="138" />As you can see, the control that was previously hidden is now visible and has been moved.</p>  <p clear="both">I know this is a basic solution to an easy problem, but I had to figure it out, and I hope that someone searching may find this useful as well. The above example was a new form I was starting; it is not the actual application in question.</p>

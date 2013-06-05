@@ -1,0 +1,12 @@
+site:
+    title: 'Chris Benard'
+    description: 'Software developer living in Plano, Texas'
+    author: Chris
+    pretty_urls: true
+    tag_url: tag/%tag%
+    category_url: category/%category%
+    default_format: shortcodes
+
+smartypants:
+    enable: no
+    use_smartypants_typographer: true

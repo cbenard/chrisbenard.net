@@ -1,0 +1,33 @@
+---
+title: 'Strong Name an Assembly Without Source Code'
+id: '233'
+author: 'Chris Benard'
+tags:
+    - Programming
+    - 'c#'
+    - Work
+    - linkedin
+    - 'strong name'
+    - assembly
+category: Programming
+layout: post.html.twig
+time: '12:57:11'
+---
+Because I program in the 1970’s, part of what I do is programming against modems and serial ports. Specifically, we send medical claims over modem to adjudicators, in the event of unavailable internet access. As a customer, you’ll appreciate having your pharmacy delay you for 20 seconds rather than saying “Sorry; you can’t have your medicine.”
+
+While taking a break from disco dancing, I was trying to add a <a href="http://msdn.microsoft.com/en-us/library/wd40t7ad.aspx">strong name</a> to one of our projects. One of the requirements, however, for strong naming is that all of the assemblies you reference must be strong named as well. All are, except one: <a href="http://www.wcscnet.com/CdrvLNBro.htm">COMM-DRV/Lib.Net</a>. We use this assembly to talk to the modems, because it abstracts a lot of the serial communications and allows us to program against a logical “modem".
+
+I called the vendor, <a href="http://www.wcscnet.com">Willies Computer Software Company</a>, and he said that we’d have to have the source license to strong name, but I asked why they don’t strong name their own binary distribution. He just kept saying they don’t do that, and we’d have to buy the source license. We didn’t need to make changes to their code, though; in fact, I already did that by inheriting their class and hiding some methods with new ones.
+
+So, I set about trying to find out how to strong name an assembly for which you do not have the source. The short answer is “you can’t.” The longer answer is “You can’t, unless you disassemble it, reassemble it, while signing at the same time, and only if it’s not obfuscated.” I finally found the answer I was looking for at <a href="http://www.geekzilla.co.uk/ViewCE64BEF3-51A6-4F1C-90C9-6A76B015C9FB.htm">geekzilla</a>.
+
+Here are the steps you need (back up your old assembly):
+<h3>Create a Key Pair</h3>
+This is only necessary, of course, if you don't already have one generated for yourself or your company.
+<pre class="brush:plain">sn.exe -k C:\Path\To\KeyPair.snk</pre>
+<h3>Disassemble the Assembly into IL</h3>
+<pre class="brush:plain">ildasm.exe CdrvLibNet.dll /out:CdrvLibNet.il</pre>
+<h3>Reassemble the Assembly from IL While Signing</h3>
+<pre class="brush:plain">ilasm.exe CdrvLibNet.il /dll /output=CdrvLibNet-StrongNamed.dll /key=C:\Path\To\KeyPair.snk</pre>
+<h3>The Result</h3>
+Thankfully, everything worked great, because their assembly was not obfuscated (it’s basically a .Net wrapper around their C++ unmanaged, native DLL product, so no real intellectual property to steal here). Now, we have their product strong named with our public key, and we are able to build on top of it with a strong named product of our own.

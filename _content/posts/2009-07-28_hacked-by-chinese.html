@@ -1,0 +1,31 @@
+---
+title: 'Hacked by Chinese'
+id: '264'
+author: 'Chris Benard'
+tags:
+    - Programming
+    - linkedin
+    - 'Visual Studio'
+    - 'code red'
+    - solution
+    - corruption
+    - 'source control'
+    - 'team foundation server'
+category: Programming
+layout: post.html.twig
+time: '10:51:36'
+---
+<p>On our main product, in a branch on which I’m working on a Point of Sale product, something happened in the process of checking files into <a href="http://en.wikipedia.org/wiki/Source_control">source control</a>. In our case, we’re using <a href="http://en.wikipedia.org/wiki/Team_Foundation_Server">Team Foundation Server</a>. My guess is that the corruption happened on my hard drive for who knows what reason, but this is the beginning of the resulting solution file that ended up in TFS: a bunch of Chinese-looking characters instead of a project name.</p>  <pre style="font-size: 1.1em" class="brush:plain; highlight: 3">Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project(&quot;{54435603-DBB4-11D2-8724-00A0C9A8B90C}&quot;) = &quot;펐!蝀ጢ&quot;, &quot;ProductNameFaxServiceSetup\ProductNameFaxServiceSetup.vdproj&quot;, &quot;{DDA7A291-A5F6-4FEA-B11E-BBE90848167D}&quot;
+EndProject
+Project(&quot;{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}&quot;) = &quot;CompanyName.Claim.Common&quot;, &quot;CompanyName.Claim.Common\CompanyName.Claim.Common.csproj&quot;, &quot;{11EE0005-87E4-44E0-806A-0BCB382468F0}&quot;
+EndProject
+Project(&quot;{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}&quot;) = &quot;CompanyName.Claim.Modem&quot;, &quot;CompanyName.Claim.Modem\CompanyName.Claim.Modem.csproj&quot;, &quot;{FE62F256-5A9C-4212-8EFB-CCD0AC0D59AF}&quot;
+EndProject</pre>
+
+<p>It took a while to track down, because it manifested itself as missing projects, missing dependencies. I kept adding back things one at a time and then ending up with two more dependencies left to add. Finally, I just looked at the raw solution file and saw how it was messed up. I went back to find a file in the source control history that wasn’t messed up, got that specific version by change set, and then added the specific projects that had been added since then back to the solution.</p>
+
+<p>Thanks to source control, I was back up and running in no time.</p>
+
+<p style="font-style: italic; font-size: 0.85em">The title is from the phrase with which the <a href="http://en.wikipedia.org/wiki/Code_Red_%28computer_worm%29">Code Red worm</a> defaced web sites it infected. We didn’t really get hacked by the Chinese.</p>

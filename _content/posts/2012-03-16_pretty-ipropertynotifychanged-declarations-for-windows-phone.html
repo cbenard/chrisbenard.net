@@ -1,0 +1,161 @@
+---
+title: 'Pretty IPropertyNotifyChanged Declarations for Windows Phone'
+id: '389'
+author: 'Chris Benard'
+tags:
+    - Programming
+    - 'c#'
+    - .net
+    - wp7
+    - wpf
+    - silverlight
+category: Programming
+layout: post.html.twig
+time: '13:32:50'
+---
+<h2>The Problem</h2>
+<p>I've been doing a bit of WPF/<a href="http://www.microsoft.com/windowsphone/">Windows Phone</a> development. Usually <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.inotifypropertychanged.aspx"><code>INotifyPropertyChanged</code></a> declarations for properties are really ugly. The big problem is that the <code>INotifyPropertyChanged</code> interface relies on strings, which don't refactor well.</p>
+<p>I'm also using the fantastic <a href="http://mvvmlight.codeplex.com/">MVVM Light Toolkit</a>, which makes life a lot easier when doing Windows Phone development.</p> MVVM Light has a snippet that you invoke with the shortcut <code>mvvminpc</code> that produces the following:
+
+<pre class="brush:csharp">/// &lt;summary&gt;
+/// The &lt;see cref=&quot;ScreenName&quot; /&gt; property's name.
+/// &lt;/summary&gt;
+public const string ScreenNamePropertyName = &quot;ScreenName&quot;;
+
+private string _screenName = String.Empty;
+
+/// &lt;summary&gt;
+/// Sets and gets the ScreenName property.
+/// Changes to that property's value raise the PropertyChanged event. 
+/// &lt;/summary&gt;
+public string ScreenName
+{
+	get
+	{
+		return _screenName;
+	}
+
+	set
+	{
+		if (_screenName == value)
+		{
+			return;
+		}
+
+		_screenName = value;
+		RaisePropertyChanged(ScreenNamePropertyName);
+	}
+}</pre>
+
+That saves quite a bit of work, but it's still ugly. It still doesn't refactor well because you have to change that property that corresponds to the string. MVVM Light also includes another snippet with the shortcut <code>mvvminpclambda</code> that gets closer to what I want, but it's still a large declaration with the equality checking, but instead of using <code>ScreenNamePropertyName</code> (and you get to lose that property), that call looks like:
+<pre class="brush:csharp">RaisePropertyChanged(() => ScreenName);</pre>
+
+<p>That's getting there, but it's still messy. I found a great solution for this problem from <a href="http://wpftutorial.net/INotifyPropertyChanged.html">Christian Mosers</a>, but it doesn't compile in Windows Phone Silverlight due to the lambda compile, and it relies on <code>PropertyChangedEventHandler</code>. Also, Christian's sets the value <strong>after</strong> the event handler is called. I'm not sure if that's a mistake, but it seems like it is, and someone else already pointed that out in his comments.</p>
+
+<p>I've modified it a bit and now it works, gives me an <code>inpcpretty</code> shortcut, and cleans up my declarations a lot. I tried making it an extension method of the delegate I created, but that doesn't work. In the end, I made it an extension of the value type T.</p>
+
+<h2>The New Code</h2>
+
+<pre class="brush:csharp">        private string _screenName = String.Empty;
+        public string ScreenName
+        {
+            get { return _screenName; }
+            set { value.ChangeAndNotify(RaisePropertyChanged, ref _screenName, () => ScreenName); }
+        }</pre>
+<h2>The Extension Method</h2>
+<pre class="brush:csharp">namespace System
+{
+    public static class INotifyPropertyChangedExtensions
+    {
+        public delegate void OnPropertyNotifyChangedDelegate(string input);
+
+        public static bool ChangeAndNotify&lt;T&gt;(this T value, OnPropertyNotifyChangedDelegate handler,
+            ref T field, Expression&lt;Func&lt;T&gt;&gt; memberExpression)
+        {
+            if (memberExpression == null)
+            {
+                throw new ArgumentNullException(&quot;memberExpression&quot;);
+            }
+            var body = memberExpression.Body as MemberExpression;
+            if (body == null)
+            {
+                throw new ArgumentException(&quot;Lambda must return a property.&quot;);
+            }
+            if (EqualityComparer&lt;T&gt;.Default.Equals(field, value))
+            {
+                return false;
+            }
+
+            var vmExpression = body.Expression as ConstantExpression;
+            if (vmExpression != null)
+            {
+                field = value;
+
+                if (handler != null)
+                {
+                    handler(body.Member.Name);
+                }
+            }
+            return true;
+        }
+    }
+}</pre>
+<h2>The Snippet</h2>
+<pre class="brush:xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;CodeSnippets xmlns=&quot;http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet&quot;&gt;
+  &lt;CodeSnippet Format=&quot;1.0.0&quot;&gt;
+    &lt;Header&gt;
+      &lt;SnippetTypes&gt;
+        &lt;SnippetType&gt;Expansion&lt;/SnippetType&gt;
+      &lt;/SnippetTypes&gt;
+      &lt;Title&gt;INPC Property&lt;/Title&gt;
+      &lt;Author&gt;Chris Benard&lt;/Author&gt;
+      &lt;Description&gt;A property raising PropertyChanged with a string. The class using this property should inherit GalaSoft.MvvmLight.ObservableObject.&lt;/Description&gt;
+      &lt;HelpUrl&gt;http://www.galasoft.ch/mvvm&lt;/HelpUrl&gt;
+      &lt;Shortcut&gt;inpcpretty&lt;/Shortcut&gt;
+    &lt;/Header&gt;
+    &lt;Snippet&gt;
+      &lt;Declarations&gt;
+        &lt;Literal Editable=&quot;true&quot;&gt;
+          &lt;ID&gt;Type&lt;/ID&gt;
+          &lt;ToolTip&gt;Property type&lt;/ToolTip&gt;
+          &lt;Default&gt;bool&lt;/Default&gt;
+          &lt;Function&gt;
+          &lt;/Function&gt;
+        &lt;/Literal&gt;
+        &lt;Literal Editable=&quot;true&quot;&gt;
+          &lt;ID&gt;AttributeName&lt;/ID&gt;
+          &lt;ToolTip&gt;Attribute name&lt;/ToolTip&gt;
+          &lt;Default&gt;_myProperty&lt;/Default&gt;
+          &lt;Function&gt;
+          &lt;/Function&gt;
+        &lt;/Literal&gt;
+        &lt;Literal Editable=&quot;true&quot;&gt;
+          &lt;ID&gt;InitialValue&lt;/ID&gt;
+          &lt;ToolTip&gt;Initial value&lt;/ToolTip&gt;
+          &lt;Default&gt;false&lt;/Default&gt;
+          &lt;Function&gt;
+          &lt;/Function&gt;
+        &lt;/Literal&gt;
+        &lt;Literal Editable=&quot;true&quot;&gt;
+          &lt;ID&gt;PropertyName&lt;/ID&gt;
+          &lt;ToolTip&gt;Property name&lt;/ToolTip&gt;
+          &lt;Default&gt;MyProperty&lt;/Default&gt;
+          &lt;Function&gt;
+          &lt;/Function&gt;
+        &lt;/Literal&gt;
+      &lt;/Declarations&gt;
+      &lt;Code Language=&quot;csharp&quot;&gt;
+        &lt;![CDATA[private $Type$ $AttributeName$ = $InitialValue$;
+        public $Type$ $PropertyName$
+        {
+            get { return $AttributeName$; }
+            set { value.ChangeAndNotify(RaisePropertyChanged, ref $AttributeName$, () =&gt; $PropertyName$); }
+        }]]&gt;
+      &lt;/Code&gt;
+    &lt;/Snippet&gt;
+  &lt;/CodeSnippet&gt;
+&lt;/CodeSnippets&gt;</pre>
+<h2>Conclusion</h2>
+<p>There is probably a better way to do this, but I'm not that experienced in WPF/Silverlight/Windows Phone yet. If you know of a better way, please let me know.</p>
+<p>To use this snippet, click the raw button in the code listing (looks like &lt;&gt;), save the contents as <code>inpcpretty.snippet</code>. Then, in Visual Studio, go to Tools -> Code Snippets Manager. Switch the language to C# and select Import. Choose the <code>.snippet</code> file you saved and you should be in business!</p>

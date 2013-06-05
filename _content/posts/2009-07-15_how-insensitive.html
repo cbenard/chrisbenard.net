@@ -1,0 +1,81 @@
+---
+title: 'How Insensitive'
+id: '225'
+author: 'Chris Benard'
+tags:
+    - Programming
+    - 'c#'
+    - Work
+    - linkedin
+    - csharp
+    - case
+    - sensitivity
+    - insensitivity
+category: Programming
+layout: post.html.twig
+time: '09:32:23'
+---
+<p class="new"><strong>Update:</strong> Added section at the bottom detailing what <strong>not</strong> to do.</p>
+
+As part of the updater process that I wrote for a current project, a “boot strapper” program queries the database for available versions, and if there is a newer version available, it deletes the current program folder, replaces those files with the new files, and then executes the main program executable. If there are no newer versions, it simply executes the main program executable immediately. This gives the user they are executing the program itself, instead of the “invisible” boot strapper, but we are able to easily manage updates in this manner.
+
+Obviously, if you are a .Net developer, you know about the venerable <a href="http://generally.wordpress.com/2007/09/27/using-appconfig-for-user-defined-runtime-parameters/">app.config</a>, which is used to set program parameters at run-time, rather than at design time. Because these can contain changes to our connection strings and custom configuration sections, we wanted to preserve this and other special files that may be used in the future. As our solution, we created a whitelist of files that we do want to replace, that looked like this:
+<pre class="brush:csharp">        ///
+        /// Extensions of files that may be deleted during uninstall/reinstall.
+        ///
+        private List _deletableExtensions = new List(
+            new string[] { ".exe", ".dll", ".pdb", ".chm", ".manifest" });
+
+        private bool canDeleteOrOverwrite(FileInfo file)
+        {
+            // Only delete files with specific extensions.
+            bool canDelete = _deletableExtensions.Contains(file.Extension);
+
+            return canDelete;
+        }</pre>
+Before anybody murders me, we camel case private methods and underscore prefix and camel case private class-level variables here. As you can see, this will allow deletion of executables, class libraries, debug symbols, help files, and manifests. However, we had a problem in my code that didn’t surface until yesterday. We were trying to figure out why one file out of all the files in the directory was remaining an older version, “ActiveReports3.DLL”.
+
+What may be obvious to the reader, especially considering the title of this post, is that my <a href="http://msdn.microsoft.com/en-us/library/bhkz42b3.aspx">List&lt;T&gt;.Contains()</a> check, by default, is case sensitive, and “.DLL” != “.dll”. This required quite a bit of stepping through code to find, as I wrote this code a long time ago. A simple press of "Ctrl+Shift+Space” revealed that there was an overload of <a href="http://msdn.microsoft.com/en-us/library/bb339118.aspx">IEnumerable&lt;T&gt;.Contains</a>(T item, <a href="http://msdn.microsoft.com/en-us/library/ms132151.aspx">IEqualityComparer&lt;T&gt;</a> comparer).
+
+Because I’ve had to do this in the past, I knew that, because my T in this case was string, all I needed to do was use the <a href="http://msdn.microsoft.com/en-us/library/system.stringcomparer.aspx">StringComparer</a>, which implements the IEqualityComparer&lt;string&gt; interface. Because it is filenames, and we are working with Visual Studio generated files, we care neither about culture nor case in this instance. Here is the revised, working version:
+<pre class="brush:csharp">        ///
+        /// Extensions of files that may be deleted during uninstall/reinstall.
+        ///
+        private List _deletableExtensions = new List(
+            new string[] { ".exe", ".dll", ".pdb", ".chm", ".manifest" });
+
+        private bool canDeleteOrOverwrite(FileInfo file)
+        {
+            // Only delete files with specific extensions.
+            bool canDelete = _deletableExtensions.Contains(
+                file.Extension,
+                StringComparer.InvariantCultureIgnoreCase);
+
+            return canDelete;
+        }</pre>
+That’s it! That tiny change fixed our issue and allowed the boot strapper to overwrite that file. It’s amazing that a simple little omission like that can lead to such a strange problem manifesting itself. Everybody makes mistakes; I just thought I’d showcase one of my errors and how I fixed it.
+
+After talking to one of my coworkers about this post, he mentioned something that we have both seen done to "work around" this particular problem, which should not be done. This is what I have seen before in others' code:
+<pre class="brush:csharp">        ///
+        /// Extensions of files that may be deleted during uninstall/reinstall.
+        ///
+        private List _deletableExtensions = new List(
+            new string[] { ".exe", ".dll", ".pdb", ".chm", ".manifest" });
+
+        private bool canDeleteOrOverwrite(FileInfo file)
+        {
+            bool canDelete = false;
+
+            // Only delete files with specific extensions.
+            foreach (string currentExtension in _deletableExtensions)
+            {
+                if (currentExtesion.ToLower() == file.Extension.ToLower())
+                {
+                    canDelete = true;
+                    break;
+                }
+            }
+
+            return canDelete;
+        }</pre>
+This creates a LOT of strings on the heap in the process is and is very inefficient. It's much better to let .Net handle itself and just let it know whether you care about culture and/or case sensitivity.
