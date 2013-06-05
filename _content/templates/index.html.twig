@@ -20,6 +20,9 @@
         $(function() {
             $('pre').not('.prettyprint').filter('[class^=brush]').addClass('prettyprint linenums');
             prettyPrint();
+
+            $('div.note').not('.alert').addClass('alert alert-info');
+            $('div.new').not('.alert').addClass('alert alert-block');
         });
     </script>
 	
