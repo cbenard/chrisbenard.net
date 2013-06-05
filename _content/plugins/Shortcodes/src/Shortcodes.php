@@ -54,13 +54,10 @@ class Shortcodes extends MarkdownExtra_Parser
             $alignment = null;
             $caption = null;
             $captionClasses = "";
-/*print $matches[1][$key];
-print "<br />";
-print $this->convert_smart_quotes($matches[1][$key]);
-exit;*/
+
             preg_match_all("~(\S+)=[\"']?((?:.(?![\"']?\s+(?:\S+)=|[>\"']))+.)[\"']?~",
                 $this->convert_smart_quotes($matches[1][$key]), $innerMatches);
-//var_dump($innerMatches);exit;
+
             foreach ($innerMatches[1] as $innerKey => $innerMatched)
             {
                 if ($innerMatched == "align")
