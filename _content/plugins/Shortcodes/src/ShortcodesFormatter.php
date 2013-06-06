@@ -8,11 +8,10 @@ class ShortcodesFormatter implements IFormatter
 {
     protected $pieCrust;
     protected $parser;
-    
+
     public function initialize(IPieCrust $pieCrust)
     {
         $this->pieCrust = $pieCrust;
-        $this->parser = null;
     }
     
     public function getPriority()
@@ -35,7 +34,7 @@ class ShortcodesFormatter implements IFormatter
         if ($this->parser == null)
         {
             require_once (__DIR__.'/Shortcodes.php');
-            $this->parser = new \Shortcodes;
+            $this->parser = new \Shortcodes($this->pieCrust);
         }
 
         $this->parser->fn_id_prefix = '';

@@ -4,11 +4,16 @@ require_once(PieCrust\PieCrustDefaults::APP_DIR.'/../../libs/markdown/markdown-e
 
 class Shortcodes extends MarkdownExtra_Parser
 {
-    public function __construct()
+    protected $pieCrust;
+
+    public function __construct(\PieCrust\IPieCrust $pieCrust)
     {
+        $this->pieCrust = $pieCrust;
+
         $this->document_gamut += array(
             'doMessageBlocks' => 1,
             'doCaptionBlocks' => 1,
+            'doAssetReplacement' => 1,
         );
 
         parent::MarkdownExtra_Parser();
@@ -98,6 +103,14 @@ class Shortcodes extends MarkdownExtra_Parser
         $edited = str_replace('zxcvbasdfgqwerttrewqgfdsabvcxz', "\n", $edited);
 
         return $edited;
+    }
+
+    public function doAssetReplacement($text)
+    {
+        return str_replace(
+            "http://chrisbenard.net/wp-content/uploads/",
+            $this->pieCrust->getConfig()->getValue('site/root') . "assets/uploads/",
+            $text);
     }
 
     protected function convert_smart_quotes($string) 

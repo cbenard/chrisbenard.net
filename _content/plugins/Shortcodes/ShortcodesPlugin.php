@@ -2,6 +2,7 @@
 
 use PieCrust\PieCrustPlugin;
 use PieCrust\Formatters\ShortcodesFormatter;
+use PieCrust\IPieCrust;
 
 class ShortcodesPlugin extends PieCrustPlugin
 {
