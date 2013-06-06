@@ -45,7 +45,7 @@ h1, h2, h3, h4, h5, h6 a, a:hover, a:visited {
 
 .post-meta-month {
     /*background-color: #7E93A8;*/
-    background-color: #502815;
+    background-color: rgb(211, 137, 20);
 }
 
 .post-meta-day {
@@ -58,4 +58,16 @@ h1, h2, h3, h4, h5, h6 a, a:hover, a:visited {
 
 h2.post-title {
     margin: 0;
+}
+
+.image-caption {
+    max-width: 90%;
+}
+
+.navbar .nav>li>a:focus, .navbar .nav>li>a:hover {
+    color: rgb(255, 166, 26);
+}
+
+.navbar a.brand:hover {
+    color: #fff;
 }
