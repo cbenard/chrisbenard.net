@@ -1,12 +1,13 @@
 <article class="blog-post" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
     <div class="row">
-        <div class="span1">
+        <div class="span1 hidden-phone">
             <div class="post-meta-month">{{ post.date|date('M') }}</div>
             <div class="post-meta-day">{{ post.date|date('d') }}</div>
             <div class="post-meta-year">{{ post.date|date('Y') }}</div>
         </div>
         <div class="span8">
             <h2 class="post-title"><a href="{{ post.url }}">{{ post.title }}</a></h2>
+            <h5 class="post-meta-postdate visible-phone">Posted: {{ post.date|date('M') }} {{ post.date|date('d') }}, {{ post.date|date('Y') }}</h5>
             <ul class="post-meta">
                 {% if post.category %}
                     <li><i class="icon-list-alt"></i> <a href="{{ pccaturl(post.category) }}">{{ post.category }}</a></li>

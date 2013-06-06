@@ -71,3 +71,18 @@ h2.post-title {
 .navbar a.brand:hover {
     color: #fff;
 }
+
+.navbar .brand {
+    font-size: 30px;
+}
+
+@media (max-width: 979px)
+{
+    .navbar-fixed-top .navbar-inner, .navbar-fixed-bottom .navbar-inner {
+        padding: 0;
+    }
+
+    #mainNavToggleButton {
+        margin: 14.5px 15px 14.5px;
+    }
+}
