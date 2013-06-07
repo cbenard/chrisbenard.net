@@ -7,4 +7,14 @@ date: '2005-12-18'
 time: '20:50:24'
 active: 'resume'
 ---
-<div id="resume">My <a href="http://careers.stackoverflow.com/chrisbenard" rel="me">StackOverflow Careers profile</a> has an up to date version of my current resume.</div>
+<div id="resume-info">
+    <section class="resume-link">
+        My <a href="http://careers.stackoverflow.com/chrisbenard" rel="me"><img src="{{ pcurl('img/stackoverflow.svg') }}" alt="StackOverflow Careers Profile" />StackOverflow Careers profile</a> has an up to date version of my current resume.
+    </section>
+
+    <section class="printable-resume">
+        <a class="no-decorate-image-link" href="{{ assets['Chris Benard\'s Resume'] }}"><i class="icon-print icon-2x"></i></a>
+        An up-to-date printable <a href="{{ assets['Chris Benard\'s Resume'] }}">PDF</a> is also available courtesy of StackOverflow.
+
+    </section>
+</div>

@@ -136,10 +136,6 @@ img.brand-gravitar {
     margin-top: 0;
 }
 
-.piecrustbranding {
-    font-size: 0.7em;
-}
-
 .socialicons .stackoverflowflair {
     position: relative;
     /* Account for padding in the image */
@@ -152,4 +148,51 @@ img.brand-gravitar {
     vertical-align: top;
     position: relative;
     top: 2px;
+}
+
+.post-meta-tags {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+/* rotate author under dates. IE hates it of course
+.post-meta-author {
+    transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+    font-size: 20px;
+    width: 250px;
+    left: -75px;
+    position: relative;
+    top: 120px;
+}
+*/
+
+.resume-link {
+    vertical-align: middle;
+    line-height: 25px;
+}
+
+.resume-link img {
+    width: 20px;
+    height: 20px;
+}
+
+#resume-info section {
+    margin-top: 10px;
+}
+
+.no-decorate-image-link, .no-decorate-image-link:hover, .no-decorate-image-link:active, .no-decorate-image-link:visited {
+    text-decoration: none;
+    color: inherit;
+}
+
+.sidebar-tag-name {
+    padding: 5px 5px 5px 0;
+}
+
+footer hr {
+    clear: both;
 }

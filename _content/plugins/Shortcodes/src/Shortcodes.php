@@ -107,10 +107,42 @@ class Shortcodes extends MarkdownExtra_Parser
 
     public function doAssetReplacement($text)
     {
-        return str_replace(
+        if (!$text)
+            return $text;
+
+        $text = $this->replace_all_text(
             "http://chrisbenard.net/wp-content/uploads/",
             $this->pieCrust->getConfig()->getValue('site/root') . "assets/uploads/",
             $text);
+
+        $text = $this->replace_all_text(
+            "http://chrisbenard.net/images/",
+            $this->pieCrust->getConfig()->getValue('site/root') . "assets/images/",
+            $text);
+
+        $text = $this->replace_all_text(
+            "src=\"/images/",
+            "src=\"" . $this->pieCrust->getConfig()->getValue('site/root') . "assets/images/",
+            $text);
+
+        return $text;
+    }
+
+    public function replace_all_text($needle, $replace, $haystack, $delimiter = "^")
+    {
+        return str_replace($needle, $replace, $haystack);
+        /*$edited = $haystack;
+
+        preg_match_all($delimiter . $needle . $delimiter, $haystack, $matches);
+
+        foreach ($matches[0] as $key => $matched)
+        {
+            print_r($matched);print_r($replace);
+            $edited = str_replace($matched, $replace, $edited, 999);
+            print_r($edited);
+        }
+
+        return $edited;*/
     }
 
     protected function convert_smart_quotes($string) 

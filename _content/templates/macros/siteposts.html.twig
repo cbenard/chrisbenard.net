@@ -8,20 +8,16 @@
         </div>
         <div class="span8">
             <h2 class="post-title"><a href="{{ thepost.url }}">{{ thepost.title }}</a></h2>
+            <h5 class="post-meta-author">By: <a href="{{ pcurl('about/') }}">Chris Benard</a></h5>
             <h5 class="post-meta-postdate visible-phone">Posted: {{ thepost.date|date('M') }} {{ thepost.date|date('d') }}, {{ thepost.date|date('Y') }}</h5>
-            <ul class="post-meta">
-                {% if thepost.category %}
-                    <li><i class="icon-list-alt"></i> <a href="{{ pccaturl(thepost.category) }}">{{ thepost.category }}</a></li>
-                {% endif %}
-
-                {% if thepost.tags %}
-                    <li><i class="icon-tag"></i>
-                        {% for tag in thepost.tags %}
-                         <a href="{{ pctagurl(tag) }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
-                        {% endfor %}
-                    </li>
-                {% endif %}
-            </ul>
+            {% if thepost.tags %}
+                <div class="post-meta-tags">
+                    <i class="icon-tag{% if (thepost.tags|length > 1) %}s{% endif %}"></i>
+                    {% for tag in thepost.tags %}
+                     <a class="post-meta-tag" href="{{ pctagurl(tag) }}">{{ tag|lower }}</a>{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
             <div class="post-content">
                 {{ thecontent|raw }}
 
