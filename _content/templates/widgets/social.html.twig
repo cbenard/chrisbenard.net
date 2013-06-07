@@ -1,9 +1,14 @@
-<section>
+<section class="topsidebar">
     <h3 class="widget-title">Follow Me</h3>
-    <div class="tags">
-        <a href="https://facebook.com/chrisbenard" rel="tooltip" data-placement="bottom" data-original-title="Facebook"><i class="icon-facebook"></i></a>
-        <a href="https://twitter.com/cbenard" rel="tooltip" data-placement="bottom" data-original-title="Twitter"><i class="icon-twitter"></i></a>
-        <a href="{{site.root}}feed.xml" rel="tooltip" data-placement="bottom" data-original-title="RSS Feed"><i class="icon-rss"></i></a>
-        <a href="https://github.com/cbenard" rel="tooltip" data-placement="bottom" data-original-title="GitHub"><i class="icon-github"></i></a>
+    <div class="socialicons">
+        <a href="https://facebook.com/chrisbenard" rel="tooltip" data-placement="bottom" data-original-title="Facebook"><i class="facebook icon-facebook-sign icon-2x" title="Facebook"></i></a>
+        <a href="https://twitter.com/cbenard" rel="tooltip" data-placement="bottom" data-original-title="Twitter"><i class="twitter icon-twitter-sign icon-2x" title="Twitter"></i></a>
+        <a href="https://github.com/cbenard" rel="tooltip" data-placement="bottom" data-original-title="GitHub"><i class="github icon-github-sign icon-2x" title="GitHub"></i></a>
+        <a href="http://stackoverflow.com/users/448/chris-benard" rel="tooltip" data-placement="bottom" data-original-title="StackOverflow"><img class="stackoverflowsvg" src="{{ pcurl('img/stackoverflow.svg') }}" alt="StackOverflow" title="StackOverflow" /></a>
+        <a href="https://linkedin.com/in/chrisbenard" rel="tooltip" data-placement="bottom" data-original-title="LinkedIn"><i class="linkedin icon-linkedin-sign icon-2x" title="LinkedIn"></i></a>
+        <a href="{{site.root}}feed.xml" rel="tooltip" data-placement="bottom" data-original-title="RSS Feed"><i class="rss icon-rss-sign icon-2x" title="RSS"></i></a>
+    </div>
+    <div class="socialicons">
+		{{ include('widgets/stackoverflow.html.twig') }}
     </div>
 </section>

@@ -17,6 +17,9 @@
         <link href="{{ pcurl('css/bootstrap-responsive.min.css') }}" rel="stylesheet" media="screen">
         <!-- FontAwesome -->
         <link href="{{ pcurl('css/font-awesome.min.css') }}" rel="stylesheet" media="screen">
+        <!--[if IE 7]>
+            <link rel="stylesheet" href="{{ pcurl('css/font-awesome-ie7.min.css') }}">
+        <![endif]-->
         <!-- Google Code Prettify Theme -->
         <link href="{{ pcurl('css/prettify/desert.css') }}" type="text/css" rel="stylesheet" />
         <!-- Override Styles -->
@@ -30,23 +33,17 @@
 
         <script src="http://code.jquery.com/jquery.js"></script>
         <script src="{{ pcurl('js/bootstrap.min.js') }}"></script>
+        <script src="{{ pcurl('js/jquery.cookie.js') }}"></script>
         <script type="text/javascript" src="{{ pcurl('js/prettify/prettify.js') }}"></script>
-        <script type="text/javascript">
-            $(function() {
-                $('pre').not('.prettyprint').filter('[class^=brush]').addClass('prettyprint linenums');
-                prettyPrint();
-
-                $('div.note').not('.alert').addClass('alert alert-info');
-                $('div.new').not('.alert').addClass('alert alert-block');
-                //$('.image-caption').not('.well').addClass('well');
-            });
-        </script>
+        <script type="text/javascript" src="{{ pcurl('js/site.js') }}"></script>
     {% endblock %}
 	
 	<link rel="shortcut icon" href="http://www.gravatar.com/avatar/0c518edd0696b331b63e31f0c2e804fc.png?size=200" />
-	<link rel="apple-touch-icon" href="http://www.gravatar.com/avatar/0c518edd0696b331b63e31f0c2e804fc.png?size=200" />
+	<link rel="apple-touch-icon" href="http://www.gravatar.com/avatar/0c518edd0696b331b63e31f0c2e804fc.png?size=200" />{#
     <link rel="openid.server" href="https://pip.verisignlabs.com/server">
-    <link rel="openid.delegate" href="http://cbenard.pip.verisignlabs.com/">	
+    <link rel="openid.delegate" href="http://cbenard.pip.verisignlabs.com/">#}
+    <link rel="openid2.provider" href="https://www.google.com/accounts/o8/ud?source=profiles" /> 
+    <link rel="openid2.local_id" href="https://profiles.google.com/114529083558994158010" /> 
 
     <meta property="og:title" content="Chris Benard" />
     <meta property="og:url" content="http://chrisbenard.net" />

@@ -12,10 +12,10 @@
                 {# <ul class="nav" id="main-menu-left">
                 </ul> #}
                 <ul class="nav pull-right" id="main-menu-right">
-                    <li><a rel="tooltip" href="{{ pcurl('blog/') }}" title="Blog">Blog</a></li>
-                    <li><a rel="tooltip" href="{{ pcurl('about/') }}" title="About">About</a></li>
-                    <li><a rel="tooltip" href="{{ pcurl('contact/') }}" title="Contact">Contact</a></li>
-                    <li><a rel="tooltip" href="{{ pcurl('resume/') }}" title="Resume">Resume</a></li>
+                    <li><a rel="tooltip" href="{{ pcurl('blog/') }}" title="Blog"{% if page.active|trim == 'blog' %} class="active"{% endif %}>Blog</a></li>
+                    <li><a rel="tooltip" href="{{ pcurl('about/') }}" title="About"{% if page.active|trim == 'about' %} class="active"{% endif %}>About</a></li>
+                    <li><a rel="tooltip" href="{{ pcurl('contact/') }}" title="Contact"{% if page.active|trim == 'contact' %} class="active"{% endif %}>Contact</a></li>
+                    <li><a rel="tooltip" href="{{ pcurl('resume/') }}" title="Resume"{% if page.active|trim == 'resume' %} class="active"{% endif %}>Resume</a></li>
                 </ul>
             </div>
         </div>

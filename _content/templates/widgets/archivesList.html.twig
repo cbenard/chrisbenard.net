@@ -1,7 +1,7 @@
 <section>
-    <h3 class="widget-title">Blog Archives</h3>
+    <h3 class="widget-title">Past Articles</h3>
     <div class="accordion" id="accordion2">
-        {% for month in blog.months %}
+        {% for month in blog.months|slice(0, 3) %}
             <div class="accordion-group">
                 <div class="accordion-heading">
                     <div class="accordion-toggle">
@@ -20,5 +20,9 @@
                 </div>
             </div>
         {% endfor %}
+
+        <div class="pull-center">
+            <a class="btn btn-inverse" href="{{ pcurl('archives/') }}"><i class="icon-book"></i> More</a>
+        </div>
     </div>
 </section>

@@ -1,0 +1,27 @@
+---
+title: Blog Archives
+layout: archives.html.twig
+format: none
+---
+
+    <div class="accordion" id="accordion2">
+        {% for month in blog.months %}
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <div class="accordion-toggle">
+                        {{ month.name }}
+                    </div>
+                </div>
+                <div id="{{ month.name|replace({' ': ''}) }}"
+                     class="accordion-body">
+                    <div class="accordion-inner">
+                        <ul class="icons ul-list-2">
+                            {% for post in month.posts %}
+                                <li><a href="{{ pcurl(post.url) }}">{{ post.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>

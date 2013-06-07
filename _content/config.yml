@@ -10,3 +10,9 @@ site:
 smartypants:
     enable: no
     use_smartypants_typographer: no
+
+baker:
+    skip_patterns:
+        - index.php
+        - .htaccess
+        - web.config

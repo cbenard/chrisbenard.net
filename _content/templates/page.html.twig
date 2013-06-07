@@ -1,14 +1,10 @@
 {% extends '.template.html.twig' %}
-
-{% block breadcrumbs %}
-    {% embed 'widgets/breadcrumb.html.twig' %}
-        {% block title %}
-            <a href="{{ page.url }}">{{ page.title }}</a>
-            {% if page.shortDescription %}<small> / {{ page.shortDescription }}</small>{% endif %}
-        {% endblock %}
-    {% endembed %}
-{% endblock %}
+{% import 'macros/sidebar.html.twig' as sidebar %}
 
 {% block content %}
+	{% if page.title %}
+	<h2 class="post-title">{{ page.title }}</h2>
+	{% endif %}
+
     {{ content|raw }}
 {% endblock %}

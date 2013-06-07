@@ -4,9 +4,10 @@ layout: blog.html.twig
 active: blog
 format: none
 ---
+{% import 'macros/siteposts.html.twig' as siteposts %}
 
 {% for post in pagination.posts %}
-    {% include 'partial_post.html.twig' %}
+    {{ siteposts.renderpartial(post, post.content) }}
 
     {% if not loop.last %}<hr />{% endif %}
 {% endfor %}

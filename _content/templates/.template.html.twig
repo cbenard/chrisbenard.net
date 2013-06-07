@@ -1,5 +1,6 @@
 {% import 'macros/google.html.twig' as google %}
-
+{% import 'macros/sidebar.html.twig' as sidebar %}
+{% import 'macros/siteposts.html.twig' as siteposts %}
 {% block header %}
     {% embed '.header.html.twig' %}
     {% endembed %}
@@ -18,7 +19,6 @@
 {% endblock %}
 
 {% block javascriptBottom %}
-    {{ google.analytics('UA-30544219-1') }}
 {% endblock %}
 
 </body>

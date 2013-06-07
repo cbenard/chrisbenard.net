@@ -1,0 +1,35 @@
+{% macro renderpartial(thepost, thecontent) %}
+<article class="blog-post" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+    <div class="row">
+        <div class="span1 hidden-phone">
+            <div class="post-meta-month">{{ thepost.date|date('M') }}</div>
+            <div class="post-meta-day">{{ thepost.date|date('d') }}</div>
+            <div class="post-meta-year">{{ thepost.date|date('Y') }}</div>
+        </div>
+        <div class="span8">
+            <h2 class="post-title"><a href="{{ thepost.url }}">{{ thepost.title }}</a></h2>
+            <h5 class="post-meta-postdate visible-phone">Posted: {{ thepost.date|date('M') }} {{ thepost.date|date('d') }}, {{ thepost.date|date('Y') }}</h5>
+            <ul class="post-meta">
+                {% if thepost.category %}
+                    <li><i class="icon-list-alt"></i> <a href="{{ pccaturl(thepost.category) }}">{{ thepost.category }}</a></li>
+                {% endif %}
+
+                {% if thepost.tags %}
+                    <li><i class="icon-tag"></i>
+                        {% for tag in thepost.tags %}
+                         <a href="{{ pctagurl(tag) }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </li>
+                {% endif %}
+            </ul>
+            <div class="post-content">
+                {{ thecontent|raw }}
+
+                {% if thepost.has_more %}
+                    <p><a href="{{ thepost.url }}" class="btn btn-large btn-inverse"><i class="icon-chevron-right"></i>Continue reading</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</article>
+{% endmacro %}

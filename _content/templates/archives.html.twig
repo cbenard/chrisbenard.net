@@ -1,0 +1,17 @@
+{% extends '.template.html.twig' %}
+
+{% block content %}
+    <div class="row">
+        <section id="page-sidebar" class="pull-left span9">
+            <h2>Blog Archives</h2>
+
+            {{ content|raw }}
+        </section>
+
+        {% block sidebar %}
+            {% import 'macros/sidebar.html.twig' as sidebar %}
+            {{ sidebar.showsidebar(blog, false) }}
+        {% endblock %}
+    </div>
+
+{% endblock %}

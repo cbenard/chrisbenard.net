@@ -1,8 +1,9 @@
-{% macro commentthread(siteid, pageurl, pageid) %}
-<div id="disqus_thread"></div>
+{% macro commentthread(url) %}
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'cbenard'; // required: replace example with your forum shortname
+    var disqus_shortname = 'chrisbenard'; // required: replace example with your forum shortname
+    {% if (url) %}var disqus_url = 'http://chrisbenard.net/{{ url }}/';
+    {% endif %}
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {

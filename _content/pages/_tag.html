@@ -1,10 +1,10 @@
 ---
 title:
-layout: index.html.twig
+layout: tag.html.twig
 format: none
 ---
 
-{% for post in blog.posts.limit(3) %}
+{% for post in pagination.posts %}
     {% include 'partial_post.html.twig' %}
 
     {% if not loop.last %}<hr />{% endif %}

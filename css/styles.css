@@ -64,6 +64,10 @@ h2.post-title {
     max-width: 90%;
 }
 
+.navbar .nav>li>a.active {
+    color: rgb(240, 190, 61);
+}
+
 .navbar .nav>li>a:focus, .navbar .nav>li>a:hover {
     color: rgb(255, 166, 26);
 }
@@ -106,4 +110,46 @@ img.brand-gravitar {
     #hero-read-blog-btn {
         margin: 5px 0 0 0;
     }
+}
+
+.socialicons .facebook {
+    color: #3b5998;
+}
+
+.socialicons .github {
+    color: black;
+}
+
+.socialicons .twitter {
+    color: #00a0d1;
+}
+
+.socialicons .rss {
+    color: #fa9b39;
+}
+
+.socialicons a {
+    text-decoration: none;
+}
+
+.topsidebar h3 {
+    margin-top: 0;
+}
+
+.piecrustbranding {
+    font-size: 0.7em;
+}
+
+.socialicons .stackoverflowflair {
+    position: relative;
+    /* Account for padding in the image */
+    left: -4px;
+}
+
+.stackoverflowsvg {
+    width: 26px;
+    height: 31px;
+    vertical-align: top;
+    position: relative;
+    top: 2px;
 }

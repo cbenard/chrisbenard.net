@@ -1,0 +1,9 @@
+{% macro showsidebar(blog, showarchives) %}
+    <aside id="sidebar" class="pull-right span3">
+        {% include 'widgets/social.html.twig' %}
+        {% if showarchives %}
+        	{% include 'widgets/archivesList.html.twig' %}
+        {% endif %}
+        {#{% include 'widgets/tagCloud.html.twig' %}#}
+    </aside>
+{% endmacro %}

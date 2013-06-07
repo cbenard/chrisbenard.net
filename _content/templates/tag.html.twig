@@ -1,0 +1,26 @@
+{% extends '.template.html.twig' %}
+
+{% block breadcrumbs %}
+    {% embed 'widgets/breadcrumb.html.twig' %}
+        {% block title %}
+            Tag <small> / {{ tag }}</small>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <section id="page-sidebar" class="pull-left span9">
+            {{ content|raw }}
+
+            {% include 'widgets/pagination.html.twig' %}
+        </section>
+
+        {% block sidebar %}
+            {% import 'macros/sidebar.html.twig' as sidebar %}
+            {{ sidebar.showsidebar(blog, true) }}
+        {% endblock %}
+    </div>
+
+{% endblock %}

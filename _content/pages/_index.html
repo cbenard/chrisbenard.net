@@ -3,9 +3,10 @@ title:
 layout: index.html.twig
 format: none
 ---
+{% import 'macros/siteposts.html.twig' as siteposts %}
 
 {% for post in blog.posts.limit(3) %}
-    {% include 'partial_post.html.twig' %}
+    {{ siteposts.renderpartial(post, post.content) }}
 
     {% if not loop.last %}<hr />{% endif %}
 {% endfor %}
