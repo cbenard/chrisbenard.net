@@ -1,0 +1,24 @@
+{% extends '.template.html.twig' %}
+
+{% block breadcrumbs %}
+    {% embed 'widgets/breadcrumb.html.twig' %}
+        {% block title %}
+            <a href="{{ page.url }}">{{ page.title }}</a>
+            <small> / Learn you some knowledge for great justice!</small>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <section id="page-sidebar" class="pull-left span9">
+            {{ content|raw }}
+
+            {% include 'widgets/pagination.html.twig' %}
+        </section>
+
+        {% block sidebar %}
+            {% include 'sidebar.html.twig' %}
+        {% endblock %}
+    </div>
+{% endblock %}

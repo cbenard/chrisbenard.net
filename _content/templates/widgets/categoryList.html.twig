@@ -1,0 +1,8 @@
+<section>
+    <h3 class="widget-title">Categories</h3>
+    <ul class="icons ul-list">
+        {% for category in blog.categories %}
+            <li><a href="{{ pcurl('category/' ~ category.name) }}">{{ category.name }}</a></li>
+        {% endfor %}
+    </ul>
+</section>

@@ -68,6 +68,10 @@ h2.post-title {
     color: rgb(255, 166, 26);
 }
 
+a.btn, a.btn:hover, a.btn:focus {
+    color: rgb(255, 255, 255);
+}
+
 .navbar a.brand:hover {
     color: #fff;
 }
@@ -91,5 +95,15 @@ img.brand-gravitar {
 
     #mainNavToggleButton {
         margin: 14.5px 15px 14.5px;
+    }
+}
+
+.pull-center {
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    #hero-read-blog-btn {
+        margin: 5px 0 0 0;
     }
 }

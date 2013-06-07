@@ -1,0 +1,68 @@
+{% import 'macros/google.html.twig' as google %}
+<!doctype html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="{{ site.description }}">
+    <meta name="author" content="{{ site.author }}">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{{ site.title }}{% if page.title %} &mdash; {{ page.title }}{% endif %}</title>
+    
+    {% block css %}
+        <!-- Bootstrap -->
+        <link href="{{ pcurl('css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+        <link href="{{ pcurl('css/bootstrap-responsive.min.css') }}" rel="stylesheet" media="screen">
+        <!-- FontAwesome -->
+        <link href="{{ pcurl('css/font-awesome.min.css') }}" rel="stylesheet" media="screen">
+        <!-- Google Code Prettify Theme -->
+        <link href="{{ pcurl('css/prettify/desert.css') }}" type="text/css" rel="stylesheet" />
+        <!-- Override Styles -->
+        <link rel="stylesheet" type="text/css" href="{{ pcurl('css/styles.css') }}" />
+    {% endblock %}
+
+    {% block javascriptTop %}
+        <!--[if lt IE 9]>
+            <script src="{{site.root}}js/html5.js"></script>
+        <![endif]-->
+
+        <script src="http://code.jquery.com/jquery.js"></script>
+        <script src="{{ pcurl('js/bootstrap.min.js') }}"></script>
+        <script type="text/javascript" src="{{ pcurl('js/prettify/prettify.js') }}"></script>
+        <script type="text/javascript">
+            $(function() {
+                $('pre').not('.prettyprint').filter('[class^=brush]').addClass('prettyprint linenums');
+                prettyPrint();
+
+                $('div.note').not('.alert').addClass('alert alert-info');
+                $('div.new').not('.alert').addClass('alert alert-block');
+                //$('.image-caption').not('.well').addClass('well');
+            });
+        </script>
+    {% endblock %}
+	
+	<link rel="shortcut icon" href="http://www.gravatar.com/avatar/0c518edd0696b331b63e31f0c2e804fc.png?size=200" />
+	<link rel="apple-touch-icon" href="http://www.gravatar.com/avatar/0c518edd0696b331b63e31f0c2e804fc.png?size=200" />
+    <link rel="openid.server" href="https://pip.verisignlabs.com/server">
+    <link rel="openid.delegate" href="http://cbenard.pip.verisignlabs.com/">	
+
+    <meta property="og:title" content="Chris Benard" />
+    <meta property="og:url" content="http://chrisbenard.net" />
+    <meta property="og:site_name" content="Chris Benard" />
+    <meta property="og:description" content="Ramblings of an inquisitive software developer in the Dallas area" />
+    <meta property="og:type" content="blog" />
+    <meta itemprop="name" content="http://chrisbenard.net" />
+    <meta itemprop="description" content="Ramblings of an inquisitive software developer in the Dallas area" />
+    <meta property="fb:admins" content="160000389"/>
+    <meta property="fb:app_id" content="391330330885193"/>
+</head>
+<body>
+
+<!--header-->
+<header id="header">
+    <div class="container">
+        {% include('.mainmenu.html.twig') %}
+    </div>
+</header>

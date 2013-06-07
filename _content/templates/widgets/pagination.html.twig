@@ -1,0 +1,8 @@
+{% if pagination.prev_page_number or pagination.next_page_number %}
+    <div class="pagination pagination-centered">
+        <ul>
+            <li {% if pagination.this_page_number == 1 %}class="disabled"{% endif %}><a href="{% if pagination.prev_page == false %}#{% else %}{{ pcurl(pagination.prev_page) }}{% endif %}">&laquo; Newer Posts</a></li>
+            <li {% if pagination.next_page == false %}class="disabled"{% endif %}><a href="{% if pagination.next_page == false %}#{% else %}{{ pcurl(pagination.next_page) }}{% endif %}">Older Posts&raquo;</a></li>
+        </ul>
+    </div>
+{% endif %}
