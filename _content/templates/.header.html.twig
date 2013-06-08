@@ -28,21 +28,9 @@
         <link rel="stylesheet" type="text/css" href="{{ pcurl('css/styles.css') }}" />
     {% endblock %}
 
-    {% block javascriptBottom %}
-        <!--[if lt IE 9]>
-            <script src="{{site.root}}js/html5.js"></script>
-        <![endif]-->
-
-        {#<script src="http://code.jquery.com/jquery.js"></script>#}
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-
-        <script src="{{ pcurl('js/bootstrap.min.js') }}"></script>
-        <script src="{{ pcurl('js/jquery.cookie.js') }}"></script>
-        <script type="text/javascript" src="{{ pcurl('js/prettify/prettify.js') }}"></script>
-        <script type="text/javascript" src="{{ pcurl('js/site.js') }}"></script>
+    {% block javascriptTop %}
     {% endblock %}
-	
+
 	<link rel="shortcut icon" href="http://www.gravatar.com/avatar/0c518edd0696b331b63e31f0c2e804fc.png?size=200" />
 	<link rel="apple-touch-icon" href="http://www.gravatar.com/avatar/0c518edd0696b331b63e31f0c2e804fc.png?size=200" />{#
     <link rel="openid.server" href="https://pip.verisignlabs.com/server">
