@@ -268,3 +268,12 @@ footer hr {
 .post-meta-google-authorship {
     display: none;
 }
+
+
+
+@media (max-width: 979px) {
+    .navbar .nav-collapse .nav>li>a:focus, .navbar .nav-collapse .nav>li>a:hover {
+        color: #fff;
+        background-color: rgb(91, 127, 163);
+    }
+}
