@@ -80,7 +80,8 @@ h2.post-title {
     color: rgb(255, 166, 26);
 }
 
-a.btn-inverse, a.btn-inverse:hover, a.btn-inverse:focus {
+a.btn-inverse, a.btn-inverse:hover, a.btn-inverse:focus,
+a.brand-hero-button, a.brand-hero-button:hover, a.brand-hero-button:visited, a.brand-hero-button:focus {
     color: rgb(255, 255, 255);
 }
 
@@ -258,4 +259,12 @@ footer hr {
 
 .contact-method-description {
     margin-bottom: 1em;
+}
+
+#blog-archives-sidebar-listing .accordion-toggle, .no-pointer {
+    cursor: auto;
+}
+
+.post-meta-google-authorship {
+    display: none;
 }

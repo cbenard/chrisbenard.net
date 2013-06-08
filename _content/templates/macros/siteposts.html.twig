@@ -8,7 +8,10 @@
         </div>
         <div class="span8">
             <h2 class="post-title"><a href="{{ thepost.url }}">{{ thepost.title }}</a></h2>
-            <h5 class="post-meta-author">By: <a href="{{ pcurl('about/') }}">Chris Benard</a></h5>
+            <h5 class="post-meta-author">
+                By: <a class="post-meta-google-authorship" href="https://plus.google.com/u/0/114529083558994158010/?rel=author">Chris Benard</a>
+                <a href="{{ pcurl('about/') }}?rel=me">Chris Benard</a>
+            </h5>
             <h5 class="post-meta-postdate visible-phone">Posted: {{ thepost.date|date('M') }} {{ thepost.date|date('d') }}, {{ thepost.date|date('Y') }}</h5>
             {% if thepost.tags %}
                 <div class="post-meta-tags">
