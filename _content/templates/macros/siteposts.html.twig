@@ -19,6 +19,14 @@
                 </div>
             {% endif %}
             <div class="post-content">
+                {% if thepost.isimported %}
+                    <div class="alert alert-warn">
+                        This post is imported from a previous version of my website. If you see something funny
+                        I missed and you think I might be able to fix it, please <a href="{{ pcurl('contact/') }}">drop
+                        me a line</a>.
+                    </div>
+                {% endif %}
+
                 {{ thecontent|raw }}
 
                 {% if thepost.has_more %}

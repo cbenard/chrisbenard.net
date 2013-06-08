@@ -21,9 +21,17 @@ pre {
     word-break: normal;
 }
 div.alert-block a {
-	/*color: #4b87cf;*/
-	color: #3b327f;
-	/*font-weight: bold;*/
+    /*color: #4b87cf;*/
+    color: #3b327f;
+    /*font-weight: bold;*/
+}
+div.alert-warn a, div.alert-warn a:hover, div.alert-warn a:focus, div.alert-warn a:visited {
+    /*color: #4b87cf;*/
+    color: rgb(37, 109, 196);
+    /*font-weight: bold;*/
+}
+a.btn, a.btn:hover, a.btn:visited, a.btn:focus {
+    color: black;
 }
 /*
 h1, h2, h3, h4, h5, h6 a, a:hover, a:visited {
@@ -72,7 +80,7 @@ h2.post-title {
     color: rgb(255, 166, 26);
 }
 
-a.btn, a.btn:hover, a.btn:focus {
+a.btn-inverse, a.btn-inverse:hover, a.btn-inverse:focus {
     color: rgb(255, 255, 255);
 }
 
@@ -195,4 +203,21 @@ img.brand-gravitar {
 
 footer hr {
     clear: both;
+}
+
+.tags .tag {
+    display: inline-block;
+    background-color: #444;
+    padding: 4px 10px;
+    margin: 0 3px 5px 0;
+    color: #ffffff;
+}
+
+.tags > .tag > a, .tags > .tag > a:hover, .tags > .tag > a:focus, .tags > .tag > a:visited {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.tags .tag:hover {
+    background-color: #005DB3;
 }

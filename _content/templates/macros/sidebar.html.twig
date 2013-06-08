@@ -1,9 +1,14 @@
 {% macro showsidebar(blog, showarchives) %}
     <aside id="sidebar" class="pull-right span3">
         {% include 'widgets/social.html.twig' %}
+        <div class="visible-phone">
+        	<a class="btn" id="showArchivesOnPhone">View {% if showarchives %}Archives and {% endif %}Tags &raquo;</a>
+        </div>
+        <div class="hidden-phone" id="hidden-phone-sidebar">
         {% if showarchives %}
         	{% include 'widgets/archivesList.html.twig' %}
         {% endif %}
         {% include 'widgets/tagCloud.html.twig' %}
+        </div>
     </aside>
 {% endmacro %}

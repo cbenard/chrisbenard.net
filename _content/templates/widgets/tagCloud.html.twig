@@ -2,8 +2,10 @@
     <h3 class="widget-title">Tags</h3>
     <div class="tags">
         {% for tag in blog.tags %}
-            <a class="no-decorate-image-link" href="{{ pcurl('tag/' ~ tag.name|lower) }}"><i class="icon-tag"></i></a>
-            <a class="sidebar-tag-name" href="{{ pcurl('tag/' ~ tag.name|lower) }}">{{ tag.name|lower }}</a>
+            <span class="tag">
+            	<a class="no-decorate-image-link" href="{{ pcurl('tag/' ~ tag.name|lower) }}"><i class="icon-tag icon-light"></i></a>
+            	<a class="sidebar-tag-name" href="{{ pcurl('tag/' ~ tag.name|lower) }}">{{ tag.name|lower }}</a>
+        	</span>
         {% endfor %}
     </div>
 </section>
