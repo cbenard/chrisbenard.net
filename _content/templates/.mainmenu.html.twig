@@ -15,7 +15,12 @@
                     <li><a rel="tooltip" href="{{ pcurl('blog/') }}" title="Blog"{% if page.active|trim == 'blog' %} class="active"{% endif %}>Blog</a></li>
                     <li><a rel="tooltip" href="{{ pcurl('about/') }}" title="About"{% if page.active|trim == 'about' or page.active|trim == 'aboutsite' %} class="active"{% endif %}>About</a></li>
                     <li><a rel="tooltip" href="{{ pcurl('contact/') }}" title="Contact"{% if page.active|trim == 'contact' %} class="active"{% endif %}>Contact</a></li>
-                    <li><a rel="tooltip" href="{{ pcurl('resume/') }}" title="Resume"{% if page.active|trim == 'resume' %} class="active"{% endif %}>Resume</a></li>
+                    <li>
+                        <a rel="tooltip" href="{{ pcurl('resume/') }}" title="Resume"{% if page.active|trim == 'resume' %} class="active"{% endif %}>Resume</a>
+                    </li>
+                    <li>
+                        <a rel="tooltip" href="{{ pcurl('search/') }}" title="Search"{% if page.active|trim == 'search' %} class="active"{% endif %}>Search</a>
+                    </li>
                 </ul>
             </div>
         </div>

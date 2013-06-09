@@ -1,0 +1,40 @@
+.siteSearch form label {
+	font-weight: bold;
+	font-size: 1.5em;
+	height: 39px;
+	display: inline-block;
+}
+
+.siteSearch .search-row {
+	line-height: 39px;
+	vertical-align: middle;
+	height: 39px;
+}
+
+.search-results-repeater > .template {
+	display: none;
+}
+
+.search-result-description {
+	font-size: .9em;
+	font-style: italic;
+}
+
+.search-result-displayurl, .search-result-displayurl a, .search-result-displayurl a:hover, .search-result-displayurl a:focus, .search-result-displayurl a:visited {
+	color: green;
+}
+
+input[type='submit'].btn-info {
+	color: white;
+}
+
+@media (max-width: 480px) {
+	input[type='submit'].btn-info {
+		display: block;
+		margin-top: 1em;
+	}
+}
+
+.search-results .displaynone {
+	display: none;
+}

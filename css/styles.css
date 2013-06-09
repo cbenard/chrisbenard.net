@@ -82,7 +82,7 @@ h2.post-title {
 
 a.btn-inverse, a.btn-inverse:hover, a.btn-inverse:focus,
 a.brand-hero-button, a.brand-hero-button:hover, a.brand-hero-button:visited, a.brand-hero-button:focus {
-    color: rgb(255, 255, 255);
+    color: rgb(255, 255, 255) !important;
 }
 
 .navbar a.brand:hover {

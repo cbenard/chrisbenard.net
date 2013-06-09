@@ -1,0 +1,53 @@
+---
+title: 'Site Search'
+author: 'Chris Benard'
+layout: search.html.twig
+date: '2013-06-08'
+time: '22:16:27'
+active: search
+format: none
+---
+<section class="siteSearch">
+	<form id="siteSearchForm">
+		<div class="search-row control-group info">
+			<!-- <label class="pull-left" for="searchBox">Search</label> -->
+			<input class="search-query info span7" type="search" id="searchBox" />
+			<input type="submit" value="Search" class="span2 btn btn-info hidden-phone" />
+			<input type="hidden" value="1" id="pageNumber" />
+			<input type="hidden" value="" id="lastSearch" />
+		</div>
+	</form>
+
+	<div class="search-results hidden">
+		<h3>Search Results</h3>
+		<div class="search-loading displaynone"><i class="icon-spinner icon-spin icon-large"></i> Loading...</div>
+		<div class="search-error displaynone">
+			<div class="alert alert-warn">
+				<i class="icon-warning-sign"></i>
+				Error: <span class="error-message"></span>
+			</div>
+		</div>
+		<div class="search-results-repeater">
+			<div class="search-result template">
+				<div class="search-result-row">
+					<div class="search-result-title"><h4><a></a></h4></div>
+					<div class="search-result-description"></div>
+					<div class="search-result-displayurl"><a></a></div>
+					<hr />
+				</div>
+			</div>
+		</div>
+		<div class="search-results-footer">
+			<div class="end">End of Results</div>
+
+		    <div class="pagination pagination-centered">
+		        <ul>
+		            <li class="previous"><a href="#">&laquo; Previous</a></li>
+		            <li class="next"><a href="#">Next&raquo;</a></li>
+		        </ul>
+		    </div>
+		</div>
+	</div>
+
+	<div class="search-results-template-container hidden">
+</section>

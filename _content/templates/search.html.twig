@@ -1,0 +1,34 @@
+{% import 'macros/disqus.html.twig' as disqus %}
+{% import 'macros/siteposts.html.twig' as siteposts %}
+{% import 'macros/sidebar.html.twig' as sidebar %}
+{% extends '.template.html.twig' %}
+
+{% block content %}
+
+    <div class="row">
+        <section id="page-sidebar" class="pull-left span9">
+
+			{% if page.title %}
+			<h2 class="post-title">{{ page.title }}</h2>
+			{% endif %}
+
+		    {{ content|raw }}
+
+        </section>
+
+        {% block sidebar %}
+            <div class="hidden-phone">
+                {{ sidebar.showsidebar(blog, true) }}
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block javascriptBottom %}
+	{{ parent() }}
+    <script type="text/javascript" src="{{ pcurl('js/blasten/hash.js') }}"></script>
+    <script type="text/javascript" src="{{ pcurl('js/search.js') }}"></script>
+    <script type="text/javascript" src="{{ pcurl('js/jquery.bingsearch.js') }}"></script>
+    <script type="text/javascript" src="{{ pcurl('js/jquery.base64.js') }}"></script>
+    <script type="text/javascript" src="{{ pcurl('js/jquery.watermark.min.js') }}"></script>
+{% endblock %}
