@@ -14,12 +14,12 @@ $(function() {
     $('#close-brand-hero').click(function() {
     	$('#brand-hero').slideUp('fast');
     	$.cookie("hide-brand-hero", true, { expires: 3650});
-    })
+    });
 
     $('#showArchivesOnPhone').click(function() {
         $('#showArchivesOnPhone').slideUp('fast');
         $('#hidden-phone-sidebar').hide();
         $('#hidden-phone-sidebar').removeClass('hidden-phone');
         $('#hidden-phone-sidebar').slideDown('fast');
-    })
+    });
 });
