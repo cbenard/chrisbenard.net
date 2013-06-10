@@ -81,7 +81,7 @@ some of the PHP and PieCrust issues I had.
 
 [20]: <http://github.com/jtreminio/>
 
-[Seth Gholson][15] ([@sethgho][19])gave me a lot of input during the development
+[Seth Gholson][15] ([@sethgho][19]) gave me a lot of input during the development
 process, and criticized my work a lot, for which I am thankful. The site is
 better as a result.
 
