@@ -16,3 +16,7 @@ baker:
         - index.php
         - .htaccess
         - web.config
+    config_variants:
+        chrisbenardnet:
+            site:
+                root: http://chrisbenard.net
