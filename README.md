@@ -72,18 +72,22 @@ WordPress imports. I maintain an even [more functional version][13] in my fork.
 People
 ------
 
-[Juan Treminio][14] was instrumental in helping me to understand PieCrust, and I
-used his site’s code as the basis for a lot of my work. I’m a .Net Developer by
-trade, and I appreciated him helping me through some of the PHP and PieCrust
-issues I had.
+[Juan Treminio][14] ([@jtreminio][20]) was instrumental in helping me to
+understand PieCrust, and I used his site’s code as the basis for a lot of my
+work. I’m a .Net Developer by trade, and I appreciated him helping me through
+some of the PHP and PieCrust issues I had.
 
 [14]: <http://jtreminio.com/>
 
-[Seth Gholson][15] gave me a lot of input during the development process, and
-criticized my work a lot, for which I am thankful. The site is better as a
-result.
+[20]: <http://github.com/jtreminio/>
+
+[Seth Gholson][15] ([@sethgho][19])gave me a lot of input during the development
+process, and criticized my work a lot, for which I am thankful. The site is
+better as a result.
 
 [15]: <http://sethgholson.com/>
+
+[19]: <http://github.com/sethgho/>
 
 Content License
 ---------------
