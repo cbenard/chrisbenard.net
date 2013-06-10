@@ -1,0 +1,9 @@
+RewriteEngine on
+
+RewriteBase /
+
+RewriteRule ^page/(.*)$ /blog/$1 [R=301,L]
+
+SetEnv TZ America/Chicago
+
+ErrorDocument 404 /pagenotfound/
