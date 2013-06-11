@@ -19,4 +19,4 @@ baker:
     config_variants:
         chrisbenardnet:
             site:
-                root: http://chrisbenard.net
+                root: https://chrisbenard.net

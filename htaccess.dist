@@ -1,10 +1,59 @@
+Options -Indexes
+DirectoryIndex index.html
+
 RewriteEngine on
 
 RewriteBase /
 
-RewriteRule ^page/(.*)$ /blog/$1 [R=301,L]
+# Remove WWW and allow for possible assets subdomain later
+RewriteCond %{HTTP_HOST} !^chrisbenard.net$ [NC]
+#RewriteCond %{HTTP_HOST} !^assets.chrisbenard.net$ [NC]
+RewriteRule ^(.*)$ https://chrisbenard.net/$1 [R=301,QSA,L]
 
+# Force SSL
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+
+# Rewrite old blog links from search engines
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(page|[0-9]+|wishlist|tag|links)/?(.*)$ / [NC,R=301,L]
+
+# Rewrite old page links from search engines
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^page/(.*)$ /blog/$1 [NC,R=301,L]
+
+# Rewrite old author links from search engines
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^author/(.*)$ /about/ [NC,R=301,L]
+
+# Rewrite old tweet links from search engines
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(tweets|tweet\-accounts)/(.*)$ /about/ [NC,R=301,L]
+
+# Rewrite archive links from search engines
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^([0-9]+|category)/(.*)$ /archives/ [NC,R=301,L]
+
+# Rewrite search links from search engines
+RewriteRule ^?s=(.*)$ /search/#?query=$1 [NC,R=301,L]
+
+# Rewrite feeds
+RewriteRule ^feed/?(rss/?)?$ /feed.rss [NC,R=301,L]
+RewriteRule ^feed/atom/?$ /feed.xml [NC,R=301,L]
+
+# Time Zone
 SetEnv TZ America/Chicago
 
+# Rewrite Error Pages
 ErrorDocument 404 /pagenotfound/
 ErrorDocument 403 /forbidden/

@@ -13,7 +13,7 @@
 
     <title>{{ site.title }}{% if page.title %} &mdash; {{ page.title }}{% endif %}</title>
     <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="{{ pcurl('feed.rss') }}" />
-
+    <link rel="alternate" type="application/atom+xml" title="Atom 0.3" href="{{ pcurl('feed.xml') }}" />
     
     {% block css %}
         <!-- Bootstrap -->
