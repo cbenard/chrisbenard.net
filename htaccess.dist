@@ -45,7 +45,7 @@ RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^([0-9]+|category)/(.*)$ /archives/ [NC,R=301,L]
 
 # Rewrite search links from search engines
-RewriteRule ^?s=(.*)$ /search/#?query=$1 [NC,R=301,L]
+RewriteRule ^\?s\=(.*)$ /search/#?query=$1 [NC,R=301,L]
 
 # Rewrite feeds
 RewriteRule ^feed/?(rss/?)?$ /feed.rss [NC,R=301,L]
