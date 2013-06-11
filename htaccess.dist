@@ -7,3 +7,4 @@ RewriteRule ^page/(.*)$ /blog/$1 [R=301,L]
 SetEnv TZ America/Chicago
 
 ErrorDocument 404 /pagenotfound/
+ErrorDocument 403 /forbidden/
