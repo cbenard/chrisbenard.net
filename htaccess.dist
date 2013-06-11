@@ -1,5 +1,6 @@
 Options -Indexes
 DirectoryIndex index.html
+AddType application/rss+xml .rss
 
 RewriteEngine on
 
@@ -14,42 +15,61 @@ RewriteRule ^(.*)$ https://chrisbenard.net/$1 [R=301,QSA,L]
 RewriteCond %{HTTPS} off
 RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
 
-# Rewrite old blog links from search engines
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^(page|[0-9]+|wishlist|tag|links)/(.*)$ / [NC,R=301,L]
-
-# Rewrite old page links from search engines
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^page/(.*)$ /blog/$1 [NC,R=301,L]
-
-# Rewrite old author links from search engines
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^author/(.*)$ /about/ [NC,R=301,L]
-
-# Rewrite old tweet links from search engines
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^(tweets|tweet\-accounts)/(.*)$ /about/ [NC,R=301,L]
-
-# Rewrite archive links from search engines
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^([0-9]+|category)/(.*)$ /archives/ [NC,R=301,L]
+# Rewrite tag and category root
+RewriteRule ^(category|tag)/?$ / [NC,R=301,L]
+# I don't use categories now
+RewriteRule ^category/.*$ / [NC,R=301,L]
 
 # Rewrite search links from search engines
 RewriteRule ^\?s\=(.*)$ /search/#?query=$1 [NC,R=301,L]
 
+# I moved wp-content and images under the assets
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^wp\-content/uploads/(.*)? /assets/uploads/$1 [NC,R=301,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^images/(.*)? /assets/images/$1 [NC,R=301,L]
+
+# Rewrite old blog links from search engines
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(wp\-content|[0-9]+|wishlist|tag|links)/? / [NC,R=301,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([0-9]+|wishlist|tag|links)$ / [NC,R=301,L]
+
+# Rewrite old page links from search engines
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^page/(.*)$ /blog/$1 [NC,R=301,L]
+
+# Rewrite old author links from search engines
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^author/(.*)$ /about/ [NC,R=301,L]
+
+# Rewrite old tweet links from search engines
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(tweets|tweet\-accounts)/(.*)$ /contact/ [NC,R=301,L]
+
+# Rewrite archive links from search engines
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([0-9]+|category)/(.*)$ /archives/ [NC,R=301,L]
+
 # Rewrite feeds
-RewriteRule ^feed/?(rss/?)?$ /feed.rss [NC,R=301,L]
-RewriteRule ^feed/atom/?$ /feed.xml [NC,R=301,L]
+RewriteRule ^feed/?(rss/?)?$ /feed.rss [NC,L]
+RewriteRule ^feed/atom/?$ /feed.xml [NC,L]
 
 # Time Zone
 SetEnv TZ America/Chicago
