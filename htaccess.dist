@@ -18,7 +18,7 @@ RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^(page|[0-9]+|wishlist|tag|links)/?(.*)$ / [NC,R=301,L]
+RewriteRule ^(page|[0-9]+|wishlist|tag|links)/(.*)$ / [NC,R=301,L]
 
 # Rewrite old page links from search engines
 RewriteCond %{REQUEST_FILENAME} -f [OR]
