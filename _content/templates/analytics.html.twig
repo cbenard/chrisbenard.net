@@ -25,10 +25,10 @@
 
         function siteSetAnalyticsEnabled(enabled) {
             if (enabled && $.cookie(analytics_disabled_key)) {
-                $.removeCookie(analytics_disabled_key);
+                $.removeCookie(analytics_disabled_key, { path: '/' });
             }
             else if (!$.cookie(analytics_disabled_key)) {
-                $.cookie(analytics_disabled_key, '1')
+                $.cookie(analytics_disabled_key, '1', { path: '/', expires: 3650 })
             }
 
             window.location.reload();
