@@ -53,6 +53,13 @@ function beginLoadResults()
 }
 
 function doSearch() {
+	if (!$('#lastSearch').val() || !$('#lastSearch').val().trim()) {
+		$('#searchBox').focus();
+		$('#searchBox').val('');
+		$('#searchBox').effect('highlight', { speed: 'slow', color: '#FFC9C9' });
+		return;
+	}
+
 	beginLoadResults();
 
 	$.bingSearch({
