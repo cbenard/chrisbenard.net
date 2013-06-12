@@ -1,0 +1,41 @@
+{% import 'macros/disqus.html.twig' as disqus %}
+{% import 'macros/siteposts.html.twig' as siteposts %}
+{% import 'macros/sidebar.html.twig' as sidebar %}
+{% extends '.template.html.twig' %}
+
+{% block content %}
+    {{ content|raw }}
+{% endblock %}
+
+{% block javascriptBottom %}
+	{{ parent() }}
+
+    <script type="text/javascript">
+    $(function() {
+        var analytics_enabled;
+        var analytics_disabled_key = 'analytics_disabled'
+        if ($.cookie(analytics_disabled_key)) {
+            analytics_enabled = false;
+        }
+        else {
+            analytics_enabled = true;
+        }
+
+        $('#analyticsStatus').text(analytics_enabled ? "On" : "Off");
+
+        function siteSetAnalyticsEnabled(enabled) {
+            if (enabled && $.cookie(analytics_disabled_key)) {
+                $.removeCookie(analytics_disabled_key);
+            }
+            else if (!$.cookie(analytics_disabled_key)) {
+                $.cookie(analytics_disabled_key, '1')
+            }
+
+            window.location.reload();
+        }
+
+        $('#turnOffAnalytics').click(function(e) { e.preventDefault(); siteSetAnalyticsEnabled(false); });
+        $('#turnOnAnalytics').click(function(e) { e.preventDefault(); siteSetAnalyticsEnabled(true); });
+    });
+    </script>
+{% endblock %}
