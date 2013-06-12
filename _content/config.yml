@@ -1,7 +1,7 @@
 site:
     title: 'Chris Benard'
-    description: 'Software developer living in Plano, Texas'
-    author: Chris
+    description: 'Ramblings of an inquisitive .Net software developer in the Dallas area'
+    author: 'Chris Benard'
     pretty_urls: true
     tag_url: tag/%tag%
     category_url: category/%category%

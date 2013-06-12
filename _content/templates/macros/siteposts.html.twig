@@ -22,13 +22,9 @@
                 </div>
             {% endif %}
             <div class="post-content">
-                {% if thepost.isimported %}
-                    <div class="alert alert-warn">
-                        This post is imported from a previous version of my website. If you see something funny
-                        I missed and you think I might be able to fix it, please <a href="{{ pcurl('contact/') }}">drop
-                        me a line</a>.
-                    </div>
-                {% endif %}
+                {% if thepost.isimported %}{% spaceless %}
+                    <div class="alert alert-warn">This post is imported from a previous version of my website. If you see something funny I missed and you think I might be able to fix it, please <a href="{{ pcurl('contact/') }}">drop me a line</a>.</div>
+                {% endspaceless %}{% endif %}
 
                 {{ thecontent|raw }}
 
@@ -39,4 +35,21 @@
         </div>
     </div>
 </article>
+{% endmacro %}
+{% macro renderdescription(thecontent) %}
+    {% set articleFinder1 = 'drop me a line</a>.</div>' %}
+    {% set articleFinder2 = '<div class="post-content">' %}
+    {% set foundArticleFinder = '' %}
+    {% if articleFinder1 in thecontent %}
+        {% set foundArticleFinder = articleFinder1 %}
+    {% elseif articleFinder2 in thecontent %}
+        {% set foundArticleFinder = articleFinder2 %}
+    {% endif %}
+    {% if foundArticleFinder %}
+        {% set pageDescription = thecontent|raw|split(foundArticleFinder)[1] %}
+    {% else %}
+        {% set pageDescription = thecontent|raw %}
+    {% endif %}
+    {% set pageDescriptionFinished = pageDescription|striptags|slice(0, 500)|replace({"\r": ' ', "\n": ' '})|trim %}
+    {{ pageDescriptionFinished }}
 {% endmacro %}
