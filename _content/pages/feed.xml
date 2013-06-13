@@ -29,8 +29,8 @@ single_page: true
         <item>
             <title>{{ post.title }}</title>
             <pubDate>{{ post.date|date("r") }}</pubDate>
-            <link>http://chrisbenard.net{{ post.url }}</link>
-            <guid>http://chrisbenard.net{{ post.url }}</guid>
+            <link>{{ post.url }}</link>
+            <guid>http://chrisbenard.net/{{ post.slug }}</guid>
             <dc:creator>{{ site.author }}</dc:creator>
             <description>
                 {{ post.content }}

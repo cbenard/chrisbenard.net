@@ -19,7 +19,7 @@ baker:
     config_variants:
         chrisbenardnet:
             site:
-                root: https://chrisbenard.net
+                root: http://chrisbenard.net
         chrisbenardnetnginx:
             site:
                 root: https://chrisbenard.net:444
