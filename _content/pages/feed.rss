@@ -19,7 +19,7 @@ single_page: true
 <channel>
     <title>{{site.title}}</title>
     <atom:link href="http://chrisbenard.net/feed.xml" rel="self" type="application/rss+xml" />
-    <link>http://yourdomain.com</link>
+    <link>http://chrisbenard.net</link>
     <description></description>
     <lastBuildDate>{{now|date("r")}}</lastBuildDate>
     <language>en-US</language>
@@ -30,9 +30,14 @@ single_page: true
     <title>{{post.title}}</title>
     <pubDate>{{post.date|date("r")}}</pubDate>
     <link>{{post.url}}</link>
-    <guid>http://chrisbenard.net{{ post.slug }}</guid>
+    <guid>http://chrisbenard.net/{{ post.slug }}</guid>
     <dc:creator>{{site.author}}</dc:creator>
-    <description>{{post.content}}</description>
+    <description>
+        {{post.content}}
+        {% if post.has_more %}
+            <p><a href="{{ post.url }}">Continue reading</a></p>
+        {% endif %}
+    </description>
 </item>
 {% endfor %}
 </channel>
