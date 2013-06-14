@@ -22,4 +22,8 @@ $(function() {
         $('#hidden-phone-sidebar').removeClass('hidden-phone');
         $('#hidden-phone-sidebar').slideDown('fast');
     });
+
+    $(function () {
+        $("[rel='tooltip']").tooltip();
+    });
 });

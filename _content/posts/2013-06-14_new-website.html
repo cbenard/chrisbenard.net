@@ -1,0 +1,33 @@
+---
+title: New Website and Host
+time: 02:50:49
+author: 'Chris Benard'
+layout: post.html.twig
+category: Personal
+tags: [ technology, personal ]
+---
+##Site
+
+My last post was in [April 2012](http://localhost:82/2012/04/10/successful-unlock-of-two-att-iphones-iphone-3g-and-iphone-4s),
+so it's probably time for an update. I successfully imported my blog into a static HTML generating tool called [PieCrust](http://bolt80.com/piecrust/).
+It creates the files serving this site now.
+
+As part of the move, I totally redid the site's design and functionality at the same time. I had a lot of help (personal and technological). You can read more about it in the [about the site]({{ pcurl('aboutsite/') }}) section, linked at the bottom of every page.
+
+##Host
+I love the new host, which was recommended to me by [Juan](http://jtreminio.com). I'm hosted at <a rel="tooltip" href="https://www.digitalocean.com/?refcode=a2586db05512" data-toggle="tooltip" title="Referral link: If you spend $10, I get $10">Digital Ocean</a> now. I got a great deal by getting 2 months free by using code `SSDTWEET`. That code should work through June 2013, and if it's past then when you read this, just google another coupon code.
+
+What you get with Digital Ocean is pretty amazing. You get to pick your Linux distribution, and they spin up the instance in under a minute.
+I was able to provide an SSH public key and they spun it up with no root password, with the key, so I was able to login securely. Setting everything else
+up has been a breeze, since I have full root access, and they even have console access (virtual KVM) in case I screw up the firewall rules.
+
+I locked down the firewall, set up [nginx](http://wiki.nginx.org/Main) (web server) with Google's [pagespeed](https://developers.google.com/speed/pagespeed/) module and [php5-fpm](http://php-fpm.org/), which is needed for a few dynamic things like the [site search]({{ pcurl('search/') }}). I'll be posting more about that later.
+
+I get all that for **$5/month**, and I emailed their support a question about DNS and got a quick reply back. So far, I'm very happy with their lowest
+end instance.
+
+##Old Site
+
+This is what the old site looked like:
+
+[caption id="attachment_436" align="aligncenter" width="500" caption="Old Site Screenshot"]<a href="{{ assets['old-site-screenshot'] }}"><img src="{{ assets['old-site-screenshot-small'] }}" alt="Old Site Screenshot" title="Old Site Screenshot" /></a>[/caption]
