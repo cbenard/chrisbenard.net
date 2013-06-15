@@ -24,6 +24,6 @@ $(function() {
     });
 
     $(function () {
-        $("[rel='tooltip']").tooltip();
+        $('#container').find('[rel="tooltip"], [rel^="tooltip "], [rel$=" tooltip"]').tooltip();
     });
 });

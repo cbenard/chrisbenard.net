@@ -137,6 +137,10 @@ i.icon-gmail {
     color: black;
 }
 
+.socialicons .stackoverflow, i.icon-stackexchange {
+    color: black;
+}
+
 .socialicons .twitter, i.icon-twitter-sign {
     color: #00a0d1;
 }
