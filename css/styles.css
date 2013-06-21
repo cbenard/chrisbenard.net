@@ -283,3 +283,27 @@ footer hr {
 #container {
     overflow-x: hidden;
 }
+
+.image-row {
+    display: block;
+    margin-bottom: 10px;
+    clear: both;
+}
+
+.rightbottompad {
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.leftbottompad {
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+@media (max-width: 480px) {
+    .postimage {
+        display: block;
+        float: none;
+        display: inline-block;
+    }
+}

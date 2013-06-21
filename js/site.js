@@ -26,4 +26,14 @@ $(function() {
     $(function () {
         $('#container').find('[rel="tooltip"], [rel^="tooltip "], [rel$=" tooltip"]').tooltip();
     });
+
+    $('.fancybox').fancybox({
+        beforeShow : function() {
+            var alt = this.element.find('img').attr('alt');
+            
+            this.inner.find('img').attr('alt', alt);
+            
+            this.title = alt;
+        }
+    });
 });
