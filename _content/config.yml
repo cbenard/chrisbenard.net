@@ -6,6 +6,7 @@ site:
     tag_url: tag/%tag%
     category_url: category/%category%
     default_format: shortcodes
+    timezone: America/Chicago
 
 smartypants:
     enable: no
