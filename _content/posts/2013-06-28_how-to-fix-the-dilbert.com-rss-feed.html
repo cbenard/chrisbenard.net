@@ -1,0 +1,76 @@
+---
+title: How to Fix the Dilbert.com RSS Feed
+time: 18:28:25
+author: 'Chris Benard'
+layout: post.html.twig
+category: Personal
+tags: [ technology, personal ]
+---
+###Dilbert.com Hates Its Users
+<div class="clearfix">
+	<div class="postimage well pull-right leftbottompad">
+		<a class="fancybox" data-fancybox-group="{{ page.slug }}" href="{{ assets['badfeed-crushed'] }}">
+			<img src="{{ assets['badfeed-small-crushed'] }}" alt="Bad RSS Feed with No Pictures" />
+		</a>
+	</div>
+	<p>
+		<a href="http://www.dilbert.com/">Dilbert.com</a> recently messed up their web comic
+		<a href="http://feed.dilbert.com/dilbert/daily_strip">RSS feed</a> that I use to read the
+		comic every day. They did this so that you have to click through to the website
+		to read each and every comic. All you can see is what's to the right here.
+	</p>
+	<p>
+		<a href="http://penny-arcade.com">Penny-Arcade</a> did this quite a while back too, and
+		I've been using <a href="http://pipes.yahoo.com/pipes/pipe.info?_id=IjjUcuSa3RGmgXqp1L3fcQ&_render=rss">someone's
+		Yahoo Pipe</a> that fixes this same problem. It just pulls the comic strip images from the page
+		and displays it instead. I never dug into how it worked or <a href="http://pipes.yahoo.com">Yahoo Pipes</a>
+		at all.
+	</p>
+	<p>
+		Yahoo Pipes is pretty awesome. It lets you just drag and drop things and connect them
+		to arrange a workflow. <a href="{{ pcurl('about/') }}">I'm a developer</a>, but I don't think
+		you have to be to use Pipes.
+	</p>
+	<p>
+		Using the Penny-Aracde one as an example, I rigged up two versions of the Dilbert.com feed.
+	</p>
+	<ul>
+		<li>
+			<h4>Large Image Version</h4>
+			This version looks great, especially on high DPI devices, as I've set the style to
+			<code>width: auto; max-width: 100%</code>. If your reader supports it, like
+			<a href="http://theoldreader.com/">TheOldReader</a> (which I highly recommend and here's
+			<a href="http://theoldreader.com/profile/cbenard">my profile</a>), then it will display beautiful,
+			large-resolution images and scale appropriately.
+			<ul>
+				<li><a href="http://pipes.yahoo.com/pipes/pipe.edit?_id=1fdc1d7a66bb004a2d9ebfedfb3808e2&_render=rss">Pipe Link</a> (so you can see how it works and edit it)</li>
+				<li><strong><a href="http://pipes.yahoo.com/pipes/pipe.run?_id=1fdc1d7a66bb004a2d9ebfedfb3808e2&_render=rss">RSS Link</a></strong> (what you need to add the subscription in your reader)</li>
+			</ul>
+		</li>
+		<li>
+			<h4>Regular Image Version</h4>
+			This version also scales using
+			<code>width: auto; max-width: 100%</code>, but it uses the smaller image (the one that used to be
+			provided by the feed).
+			<ul>
+				<li><a href="http://pipes.yahoo.com/pipes/pipe.edit?_id=feff1572a71d8e1d04465296edf5a537&_render=rss">Pipe Link</a> (so you can see how it works and edit it)</li>
+				<li><strong><a href="http://pipes.yahoo.com/pipes/pipe.run?_id=feff1572a71d8e1d04465296edf5a537&_render=rss">RSS Link</a></strong> (what you need to add the subscription in your reader)</li>
+			</ul>
+		</li>
+	</ul>
+</div>
+
+###What It Looks Like Now With These Pipes
+
+<div class="postimage well pull-left rightbottompad">
+	<a class="fancybox" data-fancybox-group="{{ page.slug }}" href="{{ assets['theoldreader-screenshot-crushed'] }}">
+		<img src="{{ assets['theoldreader-screenshot-small-crushed'] }}" alt="Much Better RSS Feed with Pictures" />
+	</a>
+</div>
+
+<p>
+	By the way: I'm using a great <a href="http://userstyles.org/styles/87977/the-old-reader-blue-accent">Blue User Style</a> in Chrome. I like the blue a lot better than TheOldReader's default sea green.
+</p>
+<p>
+	Now you get Dilbert back the way it used to be and don't have to link out to the site to read it. I still left each image as a link to the post's page on <a href="http://dilbert.com">Dilbert.com</a>.
+</p>
