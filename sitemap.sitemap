@@ -1,0 +1,5 @@
+locations:
+    - url: /
+autogen:
+    posts: true
+    pages: true

@@ -4,3 +4,7 @@ Disallow: /images/
 Disallow: /assets/
 Disallow: /slashdot/
 Disallow: /tmp/
+Disallow: /forbidden
+Disallow: /pagenotfound
+Disallow: /forbidden/
+Disallow: /pagenotfound/
