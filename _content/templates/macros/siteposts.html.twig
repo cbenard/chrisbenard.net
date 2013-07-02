@@ -1,4 +1,4 @@
-{% macro renderpartial(thepost, thecontent) %}
+{% macro renderpartial(thepost, thecontent, singlePostView) %}
 <article class="blog-post" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
     <div class="row">
         <div class="span1 hidden-phone">
@@ -28,8 +28,14 @@
 
                 {{ thecontent|raw }}
 
-                {% if thepost.has_more %}
+                {% if not singlePostView and thepost.has_more %}
                     <p><a href="{{ thepost.url }}" class="btn btn-large btn-inverse"><i class="icon-chevron-right"></i>Continue reading</a></p>
+                {% endif %}
+
+                {% if not singlePostView %}
+                    <div class="commentsLink">
+                        <a href="http://chrisbenard.net/{{ thepost.slug }}/#disqus_thread"></a>
+                    </div>
                 {% endif %}
             </div>
         </div>

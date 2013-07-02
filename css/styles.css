@@ -307,3 +307,10 @@ footer hr {
         display: inline-block;
     }
 }
+
+.commentsLink {
+    display: block;
+    clear: both;
+    font-weight: bold;
+    padding-top: 10px;
+}
