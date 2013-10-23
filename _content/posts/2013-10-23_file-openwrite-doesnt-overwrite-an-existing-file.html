@@ -1,0 +1,52 @@
+---
+title: System.IO.File.OpenWrite Doesn't Overwrite an Existing File
+author: 'Chris Benard'
+tags: [ programming, technology ]
+category: Programming
+layout: post.html.twig
+time: 14:16:34
+---
+**TLDR:** The title is pretty much the entire post.
+
+We receive data from a third-party vendor on a nightly basis and we are migrating to
+a new version of the data. Once the data (a zip file) is downloaded, it must be extracted
+and we are using [#ziplib](http://www.icsharpcode.net/opensource/sharpziplib/)
+to walk the zip file looking for a certain file.
+
+Two versions of our downloading program exist: one for the old version and one for the new version.
+Suddenly the vendor started sending the new version of the file to the old downloader, which
+broke our import process. The files are fixed width text formats.
+
+I added some defensive checks for the line length on both versions to ensure we don't try to process
+the wrong version with a downloader written for another version, but we continued to have issues with
+the older process. I reviewed the file and after about 1.2 million lines, I could see new data right
+after the old data. The vendor said they didn't see it, and I thought they were wrong, but I downloaded
+the zip file myself and extracted it and the resulting file looked fine, so I dug deeper.
+
+This may be obvious to anyone who has opened a file for write as a stream, but it was not to me. I used
+[`File.OpenWrite`](http://msdn.microsoft.com/en-us/library/system.io.file.openwrite.aspx), assuming it would
+overwrite the file or create it, but it does not. It is equivalent to using
+[`FileMode.OpenOrCreate`](http://msdn.microsoft.com/en-us/library/system.io.filemode.aspx).
+
+This is the code as I had it.
+
+<pre class="brush:csharp">using (FileStream outStream = File.OpenWrite(extractedFilename))
+{
+	// use the stream
+}</pre>
+
+I modified it to explicitly specify I want it to use `FileMode.Create`, which overwrites existing files, along
+with more options to be explicit about how I want the file to be opened and shared.
+
+<pre class="brush:csharp">using (FileStream outStream = File.Open(extractedFilename, FileMode.Create, FileAccess.Write, FileShare.Read))
+{
+	// use the stream
+}
+</pre>
+
+This corrected our issue. Thankfully it wasn't a bigger problem, because the file we receive is always growing,
+but the new dataset is larger than the old, so there was excess data at the end of the file left when we began
+writing as position 0.
+
+I thought it was an interesting mistake which led to some strange results that weren't immediately attributable to
+a specific problem.
