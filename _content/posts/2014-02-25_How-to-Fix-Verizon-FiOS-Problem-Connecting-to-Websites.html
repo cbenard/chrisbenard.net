@@ -6,6 +6,16 @@ layout: post.html.twig
 category: Personal
 tags: [ technology, personal ]
 ---
+###Feb 26, 2014 Update:
+<div class="alert alert-info">
+	Verizon appears to have solved the problem on their end
+	and an MTU of 1500 will work again. The original problem lasted from at least the beginning
+	of Feb 24, 2014 until mid-day Feb 26, 2014.
+
+	<br /><br />
+
+	The information below remains for historical information on the problem and a workaround.
+</div>
 ###Background on the Problem
 I live in the Dallas market for Verizon FiOS which is where it seems the problems are happening.
 The issue manifests primarily for me as an inability to play content reliably on YouTube,
@@ -63,7 +73,13 @@ As you can see, 1472 (which equates to a 1500 MTU [1472+28=1500]) did not work. 
 I don't use Verizon's router (I use DD-WRT and changing the MTU is easy: Setup -> MTU) but <a href="http://twitter.com/jakefolio">Jake Smith</a> provided these screenshots to me that I edited to show the steps. They come from a regular Verizon FiOS router.
 
 ###Steps to Change the MTU
+<div class="alert alert-warn">
+	You should not need to change router settings unless this problem has happened again after Feb 26, 2014. Please see the note at the top of the page.
 
+	<br /><br />
+
+	The information below remains for historical information on the problem and a workaround.
+</div>
 #### Connect to your router using a web browser
 There are [many resources](http://kb.linksys.com/Linksys/GetArticle.aspx?docid=4a3527c394744e7ba4a433c3499ecc85_Checking_the_Router_s_IP_Address_when_Using_Windows_7.xml&amp;pid=80) available to find out what your router's LAN IP address is. Connect to this address in your router. Your FiOS router has the default password printed on it if you have not changed it.
 
