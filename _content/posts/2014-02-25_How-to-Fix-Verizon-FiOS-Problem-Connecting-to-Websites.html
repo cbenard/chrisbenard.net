@@ -18,7 +18,6 @@ The following sites were reported affected by friends, others on the Internet, a
 
 * [YouTube](http://youtube.com)
 * [stackoverflow.com](http://stackoverflow.com)
-* [500px.com](http://500px.com)
 * [packagist.org](http://packagist.org)
 * [500px.com](http://www.500px.com)
 * [blog.iso50.com](http://blog.iso50.com)
@@ -57,27 +56,46 @@ As you can see, 1472 (which equates to a 1500 MTU [1472+28=1500]) did not work. 
 I don't use Verizon's router (I use DD-WRT and changing the MTU is easy: Setup -> MTU) but <a href="http://twitter.com/jakefolio">Jake Smith</a> provided these screenshots to me that I edited to show the steps. They come from a regular Verizon FiOS router.
 
 ###Steps to Change the MTU
+
+#### Connect to your router using a web browser
+There are [many resources](http://kb.linksys.com/Linksys/GetArticle.aspx?docid=4a3527c394744e7ba4a433c3499ecc85_Checking_the_Router_s_IP_Address_when_Using_Windows_7.xml&amp;pid=80) available to find out what your router's LAN IP address is. Connect to this address in your router. Your FiOS router has the default password printed on it if you have not changed it.
+
+My router's IP is 192.168.0.1, but yours may (and probably will) be different. With my example, I would navigate to http://192.168.0.1 in my web browser.
+
 <div class="clearfix">
+	<h4>Click My Network</h4>
 	<div class="postimage well pull-left leftbottompad">
 		<a class="fancybox" data-fancybox-group="{{ page.slug }}" href="{{ assets['1_click_my_network'] }}">
 			<img src="{{ assets['1_click_my_network'] }}" alt="Step 1: Click My Network" />
 		</a>
 	</div>
+</div>
+<div class="clearfix">
+	<h4>Click Network Connections</h4>
 	<div class="postimage well pull-left leftbottompad">
 		<a class="fancybox" data-fancybox-group="{{ page.slug }}" href="{{ assets['2_click_network_connections'] }}">
 			<img src="{{ assets['2_click_network_connections'] }}" alt="Step 2: Click Network Connections" />
 		</a>
 	</div>
+</div>
+<div class="clearfix">
+	<h4>Click Broadband Connection or the Pencil Icon to Edit</h4>
 	<div class="postimage well pull-left leftbottompad">
 		<a class="fancybox" data-fancybox-group="{{ page.slug }}" href="{{ assets['3_click_broadband_connection'] }}">
 			<img src="{{ assets['3_click_broadband_connection'] }}" alt="Step 3: Click Broadband Connection" />
 		</a>
 	</div>
+</div>
+<div class="clearfix">
+	<h4>Click Configure Connection</h4>
 	<div class="postimage well pull-left leftbottompad">
 		<a class="fancybox" data-fancybox-group="{{ page.slug }}" href="{{ assets['4_click_configure_connection'] }}">
 			<img src="{{ assets['4_click_configure_connection'] }}" alt="Step 4: Click Configure Connection" />
 		</a>
 	</div>
+</div>
+<div class="clearfix">
+	<h4>Change MTU to Manual and 1496</h4>
 	<div class="postimage well pull-left leftbottompad">
 		<a class="fancybox" data-fancybox-group="{{ page.slug }}" href="{{ assets['5_change_mtu'] }}">
 			<img src="{{ assets['5_change_mtu'] }}" alt="Step 5: Change MTU" />
