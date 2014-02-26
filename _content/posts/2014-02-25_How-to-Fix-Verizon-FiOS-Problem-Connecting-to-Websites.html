@@ -1,0 +1,86 @@
+---
+title: How To Fix Verizon FiOS Problem Connecting To Websites
+time: 13:54:59
+author: 'Chris Benard'
+layout: post.html.twig
+category: Personal
+tags: [ technology, personal ]
+---
+###Background on the Problem
+I live in the Dallas market for Verizon FiOS which is where it seems the problems are happening.
+The issue manifests primarily for me as an inability to play content reliably on YouTube,
+but I had many other issues on other <a href="http://en.wikipedia.org/wiki/Content_delivery_network" rel="tooltip" data-toggle="tooltip" title="" data-original-title="Content Distribution Network, used by large data providers to move assets closer to customers in disparate geographic locations">CDNs</a>. Trying to view other sites, such as <a href="http://mitchribar.com">MitchRibar.com</a>, would never succeed for some other FiOS subscribers and me.
+
+The error displayed in Chrome was <code>ERR_CONNECTION_RESET</code>.
+
+####List of sites affected
+The following sites were reported affected by friends, others on the Internet, and me:
+
+* [YouTube](http://youtube.com)
+* [stackoverflow.com](http://stackoverflow.com)
+* [500px.com](http://500px.com)
+* [packagist.org](http://packagist.org)
+* [500px.com](http://www.500px.com)
+* [blog.iso50.com](http://blog.iso50.com)
+* [mitchribar.com](http://mitchribar.com)
+* [youtrack.jetbrains.com](http://youtrack.jetbrains.com/)
+* Random problems on other sites usually when loading CDN resources
+
+###Diagnosis
+I called Verizon multiple times and they were no help of course. Since a ping worked and since a traceroute exited their network they said that the problem was either on my side or YouTube's side and didn't care that it affected multiple sites. I tried to explain the difference between ICMP and a TCP session but they aren't that smart, of course. They wouldn't even talk to me until I plugged in their router which is a terrible piece of equipment I haven't used for years. I obliged and that's when I got the above from them. They would not let me talk to a higher tier of support.
+
+However, after finding out some friends had the same issue, I was tipped off to [this forum post](http://forums.verizon.com/t5/FiOS-Internet/Unable-To-Connect-To-Certain-Websites/td-p/684937) by started by another Verizon customer. You'll see most if not all in the thread are from the Dallas market.
+
+I did some ping tests to validate that the problem is the MTU setting. Somewhere in Verizon's network, close to the DFW side of the route, someone has messed up the MTU and reduced it from the default of 1500 to 1496. Keep in mind that there is a 28 byte header so the successful (non-fragmented) ping size + 28 = MTU.
+
+In the below paste, <code>-f</code> prevents fragmentation of the packet and <code>-l 1472/1468</code> sets the ping packet length. Keep in mind that the IP header adds 28 bytes and also ping parameters are different on different platforms. This example is from Windows, but check the parameters for your platform to set these options.
+
+<pre class="prettyprint">
+>ping mitchribar.com -f -l 1472
+
+Pinging mitchribar.com [205.134.224.227] with 1472 bytes of data:
+Request timed out.
+
+Ping statistics for 205.134.224.227:
+    Packets: Sent = 1, Received = 0, Lost = 1 (100% loss),
+Control-C
+^C
+
+>ping mitchribar.com -f -l 1468
+
+Pinging mitchribar.com [205.134.224.227] with 1468 bytes of data:
+Reply from 205.134.224.227: bytes=1468 time=42ms TTL=55
+</pre>
+
+As you can see, 1472 (which equates to a 1500 MTU [1472+28=1500]) did not work. Lowering it until I got to 1468 worked, which equates to an MTU of 1496, so you can see, because of Verizon's now-broken network, <strong>we must lower the MTU from the default of 1500 to 1496</strong> to ensure the packets traverse the network correctly.
+
+I don't use Verizon's router (I use DD-WRT and changing the MTU is easy: Setup -> MTU) but <a href="http://twitter.com/jakefolio">Jake Smith</a> provided these screenshots to me that I edited to show the steps. They come from a regular Verizon FiOS router.
+
+###Steps to Change the MTU
+<div class="clearfix">
+	<div class="postimage well pull-left leftbottompad">
+		<a class="fancybox" data-fancybox-group="{{ page.slug }}" href="{{ assets['1_click_my_network'] }}">
+			<img src="{{ assets['1_click_my_network'] }}" alt="Step 1: Click My Network" />
+		</a>
+	</div>
+	<div class="postimage well pull-left leftbottompad">
+		<a class="fancybox" data-fancybox-group="{{ page.slug }}" href="{{ assets['2_click_network_connections'] }}">
+			<img src="{{ assets['2_click_network_connections'] }}" alt="Step 2: Click Network Connections" />
+		</a>
+	</div>
+	<div class="postimage well pull-left leftbottompad">
+		<a class="fancybox" data-fancybox-group="{{ page.slug }}" href="{{ assets['3_click_broadband_connection'] }}">
+			<img src="{{ assets['3_click_broadband_connection'] }}" alt="Step 3: Click Broadband Connection" />
+		</a>
+	</div>
+	<div class="postimage well pull-left leftbottompad">
+		<a class="fancybox" data-fancybox-group="{{ page.slug }}" href="{{ assets['4_click_configure_connection'] }}">
+			<img src="{{ assets['4_click_configure_connection'] }}" alt="Step 4: Click Configure Connection" />
+		</a>
+	</div>
+	<div class="postimage well pull-left leftbottompad">
+		<a class="fancybox" data-fancybox-group="{{ page.slug }}" href="{{ assets['5_change_mtu'] }}">
+			<img src="{{ assets['5_change_mtu'] }}" alt="Step 5: Change MTU" />
+		</a>
+	</div>
+</div>
