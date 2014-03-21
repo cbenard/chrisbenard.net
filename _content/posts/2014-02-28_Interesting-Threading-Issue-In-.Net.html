@@ -103,7 +103,7 @@ var queue = new Queue&lt;int&gt;();
 const short maxWorkers = 5;
 
 // Create dummy data for processing
-for (int job = 1; job &lt; 15; job++)
+for (int job = 1; job &lt;= 15; job++)
 {
 	queue.Enqueue(job);
 }
@@ -157,23 +157,24 @@ Creating worker 3.
 Creating worker 4.
 Creating worker 5.
 Worker 4 finished running job 4.
-Worker 3 finished running job 2.
-Worker 4 finished running job 6.
-Worker 3 finished running job 7.
-Worker 1 finished running job 1.
 Worker 5 finished running job 5.
-Worker 2 finished running job 3.
-Worker 4 finished running job 8.
-Worker 3 finished running job 9.
-Worker 5 finished running job 11.
-Worker 5 has no more work. Exiting.
+Worker 1 finished running job 1.
+Worker 2 finished running job 2.
+Worker 3 finished running job 3.
+Worker 1 finished running job 8.
+Worker 2 finished running job 9.
+Worker 4 finished running job 6.
+Worker 5 finished running job 7.
+Worker 3 finished running job 10.
+Worker 1 finished running job 11.
+Worker 1 has no more work. Exiting.
 Worker 2 finished running job 12.
 Worker 2 has no more work. Exiting.
-Worker 1 finished running job 10.
-Worker 1 has no more work. Exiting.
 Worker 4 finished running job 13.
 Worker 4 has no more work. Exiting.
-Worker 3 finished running job 14.
+Worker 5 finished running job 14.
+Worker 5 has no more work. Exiting.
+Worker 3 finished running job 15.
 Worker 3 has no more work. Exiting. */
 </pre>
 
