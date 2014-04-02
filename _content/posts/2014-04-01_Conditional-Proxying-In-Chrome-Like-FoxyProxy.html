@@ -1,0 +1,62 @@
+---
+title: Conditional Proxying In Chrome Like FoxyProxy
+time: 19:47:28
+author: 'Chris Benard'
+layout: post.html.twig
+tags: [ programming, technology ]
+category: Programming
+---
+This article assumes you already know how to set up a SOCKS proxy, likely via [SSH using PuTTY](http://blog.ashurex.com/2012/03/15/creating-ssh-proxy-tunnel-putty/).
+
+Lots of people use [FoxyProxy](http://getfoxyproxy.org/) in Firefox to selectively proxy based on rules. [FoxyProxy for Chrome](https://chrome.google.com/webstore/detail/foxyproxy-standard/gcknhkkoolaabfmlnjonogaaifnjlfnp) exists now, which uses the [Chrome Proxy API](https://developer.chrome.com/extensions/proxy). However, this still leaks DNS via pre-fetch queries in other places in the Chrome browser (and possibly via other extensions).
+
+If you want to force Chrome to use a conditional proxy and stop DNS leaks, you can use the [`--host-resolver-rules`](http://www.chromium.org/developers/design-documents/network-stack/socks-proxy) switch with a series of rules. You can either use FoxyProxy for Chrome if you trust it, or pass your own [PAC (Proxy Auto Configuration)](http://www.proxypacfiles.com/proxypac/index.php?option=com_content&amp;view=article&amp;id=58&amp;Itemid=87) file, which is just a simple javascript function.
+
+####Create the PAC
+Assume you save this file as `C:\mypac.pac` and you've set up a SOCKS5 proxy at `localhost:8000`.
+
+<pre class="brush:javascript">
+function FindProxyForURL(url, host)
+{
+	// The "(.*\.)?" pattern ensures it matches the
+	//   top level and sub-domains.
+	if (/^(.*\.)?nonproxieddomain1\.com$/i.test(host) ||
+		/^(.*\.)?nonproxieddomain2\.com$/i.test(host) ||
+		/^localhost$/i.test(host)) {
+		// Do not proxy
+		return "DIRECT";
+	}
+	else {
+		// Go through proxy
+		return "SOCKS5 localhost:1080";
+	}
+}</pre>
+
+####Host Resolver Rules
+Chrome has a command line parameter called `--host-resolver-rules`. This parameter allows you stop DNS leaks as mentioned above. You use the `MAP` command to map all addresses to `~NOTFOUND` except for addresses you `EXCLUDE`.
+
+You must keep this in lockstep with the `FindProxyForURL` function from your PAC. The reason for this is that you are telling Chrome to use your proxy for name resolution, for all but the regex matched domains. If a regex matches, then it will attempt to use `DIRECT`, meaning regular machine name resolution. If the regex matches, and you haven't added an `EXCLUDE` entry, you will get a "domain not found" or similar name resolution error in Chrome when you try to reach the site.
+
+It's worth mentioning that the `EXCLUDE` entries in the resolver rules **do not use regex** and instead just use a wild card syntax, so you will need to **duplicate each domain** (once with wild card and once without) to match the top level and sub-domains.
+
+Now that you understand both options and you have created your PAC file, you can now close Chrome and re-run it with new options!
+
+####Run Chrome With New Options
+You will probably want to change your Chrome shortcut to the following:
+
+<pre>"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --proxy-pac-url="file:///c:/mypac.pac" --host-resolver-rules="MAP * ~NOTFOUND,EXCLUDE localhost,EXCLUDE nonproxieddomain1.com,EXCLUDE *.nonproxieddomain1.com,EXCLUDE nonproxieddomain2.com,EXCLUDE *.nonproxieddomain2.com"</pre>
+
+You can now check your IP at a site like [IPChicken](http://www.ipchicken.com) or by simply [Googling "IP"](https://www.google.com/search?q=IP). You can play with excluding those sites from the proxy (**but be sure to add them to the `EXCLUDE` list**) and re-checking. One thing to note: Chrome does not pick up PAC changes immediately. You need to go to `chrome://net-internals/#proxy` and click "Re-apply settings". You can also clear the DNS cache at `chrome://net-internals/#dns`.
+
+####Prove You Are Completely Proxied
+
+You can prove that you are proxied and your DNS is not leaking by running the following:
+
+<pre>ipconfig /flushdns
+ipconfig /displaydns | find /i "example.org"</pre>
+
+Then, visit a site which is not excluded and is proxied in Chrome. Then run the following again (do not re-run `ipconfig /flushdns`)
+
+<pre>ipconfig /displaydns | find /i "example.org"</pre>
+
+You should not see any entries for "example.org". If you repeat the process for a site which is `EXCLUDE`d and sent `DIRECT` instead of proxied, you ***should*** see it listed in the `/displaydns` output.
