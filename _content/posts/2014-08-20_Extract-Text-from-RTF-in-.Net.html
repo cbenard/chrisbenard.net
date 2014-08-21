@@ -1,0 +1,408 @@
+---
+title: Extract Text from RTF in C#/.Net
+time: 19:35:24
+author: 'Chris Benard'
+layout: post.html.twig
+category: Programming
+tags: [ technology, work ]
+---
+{% set postIDPrefix = page.slug | replace({'/': '-', '.': ''}) %}
+At work, I was tasked with creating a class to strip RTF tags from RTF formatted text, leaving only the plain text. Microsoft's [RichTextBox](http://msdn.microsoft.com/en-us/library/cc488002%28v=VS.90%29.aspx) can do this with its ```Text``` property, but it was unavailable in the context in which I'm working.
+
+[RTF formatting](http://www.pindari.com/rtf1.html) uses control characters escaped with backslashes along with nested curly braces. Unfortunately, the nesting means I can't kill the control characters using a single regex, since I'd have to process the stack, and in addition, some control characters should be translated, such as newline and tab characters.
+
+####Example:
+
+<pre>{\rtf1\ansi\deff0
+{\colortbl;\red0\green0\blue0;\red255\green0\blue0;}
+This line is the default color\line
+\cf2
+This line is red\line
+\cf1
+This line is the default color
+}</pre>
+
+Thankfully, [Markus Jarderot](http://mizardx.blogspot.com/) provided a [great answer over at StackOverflow](http://stackoverflow.com/a/188877/448), but unfortunately for me, it's written in Python. I don't know Python, but I translated it to the best of my abilities to C# since it was very readable.
+
+If this is useful to you, you can <a href="{{ assets['RichTextStripper'] }}">download the C# version</a>, or view the original/new code below.</a>
+
+<div class="panel-group">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#{{ postIDPrefix }}collapseOne">
+          View Original Python Code
+        </a>
+      </h4>
+    </div>
+    <div id="{{ postIDPrefix }}collapseOne" class="panel-collapse collapse">
+      <div class="panel-body">
+		<pre class="brush:python">def striprtf(text):
+   pattern = re.compile(r&quot;\\([a-z]{1,32})(-?\d{1,10})?[ ]?|\\'([0-9a-f]{2})|\\([^a-z])|([{}])|[\r\n]+|(.)&quot;, re.I)
+   # control words which specify a &quot;destionation&quot;.
+   destinations = frozenset((
+      'aftncn','aftnsep','aftnsepc','annotation','atnauthor','atndate','atnicn','atnid',
+      'atnparent','atnref','atntime','atrfend','atrfstart','author','background',
+      'bkmkend','bkmkstart','blipuid','buptim','category','colorschememapping',
+      'colortbl','comment','company','creatim','datafield','datastore','defchp','defpap',
+      'do','doccomm','docvar','dptxbxtext','ebcend','ebcstart','factoidname','falt',
+      'fchars','ffdeftext','ffentrymcr','ffexitmcr','ffformat','ffhelptext','ffl',
+      'ffname','ffstattext','field','file','filetbl','fldinst','fldrslt','fldtype',
+      'fname','fontemb','fontfile','fonttbl','footer','footerf','footerl','footerr',
+      'footnote','formfield','ftncn','ftnsep','ftnsepc','g','generator','gridtbl',
+      'header','headerf','headerl','headerr','hl','hlfr','hlinkbase','hlloc','hlsrc',
+      'hsv','htmltag','info','keycode','keywords','latentstyles','lchars','levelnumbers',
+      'leveltext','lfolevel','linkval','list','listlevel','listname','listoverride',
+      'listoverridetable','listpicture','liststylename','listtable','listtext',
+      'lsdlockedexcept','macc','maccPr','mailmerge','maln','malnScr','manager','margPr',
+      'mbar','mbarPr','mbaseJc','mbegChr','mborderBox','mborderBoxPr','mbox','mboxPr',
+      'mchr','mcount','mctrlPr','md','mdeg','mdegHide','mden','mdiff','mdPr','me',
+      'mendChr','meqArr','meqArrPr','mf','mfName','mfPr','mfunc','mfuncPr','mgroupChr',
+      'mgroupChrPr','mgrow','mhideBot','mhideLeft','mhideRight','mhideTop','mhtmltag',
+      'mlim','mlimloc','mlimlow','mlimlowPr','mlimupp','mlimuppPr','mm','mmaddfieldname',
+      'mmath','mmathPict','mmathPr','mmaxdist','mmc','mmcJc','mmconnectstr',
+      'mmconnectstrdata','mmcPr','mmcs','mmdatasource','mmheadersource','mmmailsubject',
+      'mmodso','mmodsofilter','mmodsofldmpdata','mmodsomappedname','mmodsoname',
+      'mmodsorecipdata','mmodsosort','mmodsosrc','mmodsotable','mmodsoudl',
+      'mmodsoudldata','mmodsouniquetag','mmPr','mmquery','mmr','mnary','mnaryPr',
+      'mnoBreak','mnum','mobjDist','moMath','moMathPara','moMathParaPr','mopEmu',
+      'mphant','mphantPr','mplcHide','mpos','mr','mrad','mradPr','mrPr','msepChr',
+      'mshow','mshp','msPre','msPrePr','msSub','msSubPr','msSubSup','msSubSupPr','msSup',
+      'msSupPr','mstrikeBLTR','mstrikeH','mstrikeTLBR','mstrikeV','msub','msubHide',
+      'msup','msupHide','mtransp','mtype','mvertJc','mvfmf','mvfml','mvtof','mvtol',
+      'mzeroAsc','mzeroDesc','mzeroWid','nesttableprops','nextfile','nonesttables',
+      'objalias','objclass','objdata','object','objname','objsect','objtime','oldcprops',
+      'oldpprops','oldsprops','oldtprops','oleclsid','operator','panose','password',
+      'passwordhash','pgp','pgptbl','picprop','pict','pn','pnseclvl','pntext','pntxta',
+      'pntxtb','printim','private','propname','protend','protstart','protusertbl','pxe',
+      'result','revtbl','revtim','rsidtbl','rxe','shp','shpgrp','shpinst',
+      'shppict','shprslt','shptxt','sn','sp','staticval','stylesheet','subject','sv',
+      'svb','tc','template','themedata','title','txe','ud','upr','userprops',
+      'wgrffmtfilter','windowcaption','writereservation','writereservhash','xe','xform',
+      'xmlattrname','xmlattrvalue','xmlclose','xmlname','xmlnstbl',
+      'xmlopen',
+   ))
+   # Translation of some special characters.
+   specialchars = {
+      'par': '\n',
+      'sect': '\n\n',
+      'page': '\n\n',
+      'line': '\n',
+      'tab': '\t',
+      'emdash': u'\u2014',
+      'endash': u'\u2013',
+      'emspace': u'\u2003',
+      'enspace': u'\u2002',
+      'qmspace': u'\u2005',
+      'bullet': u'\u2022',
+      'lquote': u'\u2018',
+      'rquote': u'\u2019',
+      'ldblquote': u'\201C',
+      'rdblquote': u'\u201D', 
+   }
+   stack = []
+   ignorable = False       # Whether this group (and all inside it) are &quot;ignorable&quot;.
+   ucskip = 1              # Number of ASCII characters to skip after a unicode character.
+   curskip = 0             # Number of ASCII characters left to skip
+   out = []                # Output buffer.
+   for match in pattern.finditer(text):
+      word,arg,hex,char,brace,tchar = match.groups()
+      if brace:
+         curskip = 0
+         if brace == '{':
+            # Push state
+            stack.append((ucskip,ignorable))
+         elif brace == '}':
+            # Pop state
+            ucskip,ignorable = stack.pop()
+      elif char: # \x (not a letter)
+         curskip = 0
+         if char == '~':
+            if not ignorable:
+                out.append(u'\xA0')
+         elif char in '{}\\':
+            if not ignorable:
+               out.append(char)
+         elif char == '*':
+            ignorable = True
+      elif word: # \foo
+         curskip = 0
+         if word in destinations:
+            ignorable = True
+         elif ignorable:
+            pass
+         elif word in specialchars:
+            out.append(specialchars[word])
+         elif word == 'uc':
+            ucskip = int(arg)
+         elif word == 'u':
+            c = int(arg)
+            if c &lt; 0: c += 0x10000
+            if c &gt; 127: out.append(unichr(c))
+            else: out.append(chr(c))
+            curskip = ucskip
+      elif hex: # \'xx
+         if curskip &gt; 0:
+            curskip -= 1
+         elif not ignorable:
+            c = int(hex,16)
+            if c &gt; 127: out.append(unichr(c))
+            else: out.append(chr(c))
+      elif tchar:
+         if curskip &gt; 0:
+            curskip -= 1
+         elif not ignorable:
+            out.append(tchar)
+   return ''.join(out)</pre>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#{{ postIDPrefix }}collapseTwo">
+          View Translated C# Code
+        </a>
+      </h4>
+    </div>
+    <div id="{{ postIDPrefix }}collapseTwo" class="panel-collapse collapse">
+      <div class="panel-body">
+		<pre class="brush:csharp">/// &lt;summary&gt;
+/// Rich Text Stripper
+/// &lt;/summary&gt;
+/// &lt;remarks&gt;
+/// Translated from Python located at:
+/// http://stackoverflow.com/a/188877/448
+/// &lt;/remarks&gt;
+public static class RichTextStripper
+{
+	private class StackEntry
+	{
+		public int NumberOfCharactersToSkip { get; set; }
+		public bool Ignorable { get; set; }
+
+		public StackEntry(int numberOfCharactersToSkip, bool ignorable)
+		{
+			NumberOfCharactersToSkip = numberOfCharactersToSkip;
+			Ignorable = ignorable;
+		}
+	}
+
+	private static readonly Regex _rtfRegex = new Regex(@&quot;\\([a-z]{1,32})(-?\d{1,10})?[ ]?|\\'([0-9a-f]{2})|\\([^a-z])|([{}])|[\r\n]+|(.)&quot;, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+	private static readonly List&lt;string&gt; destinations = new List&lt;string&gt;
+	{
+		&quot;aftncn&quot;,&quot;aftnsep&quot;,&quot;aftnsepc&quot;,&quot;annotation&quot;,&quot;atnauthor&quot;,&quot;atndate&quot;,&quot;atnicn&quot;,&quot;atnid&quot;,
+		&quot;atnparent&quot;,&quot;atnref&quot;,&quot;atntime&quot;,&quot;atrfend&quot;,&quot;atrfstart&quot;,&quot;author&quot;,&quot;background&quot;,
+		&quot;bkmkend&quot;,&quot;bkmkstart&quot;,&quot;blipuid&quot;,&quot;buptim&quot;,&quot;category&quot;,&quot;colorschememapping&quot;,
+		&quot;colortbl&quot;,&quot;comment&quot;,&quot;company&quot;,&quot;creatim&quot;,&quot;datafield&quot;,&quot;datastore&quot;,&quot;defchp&quot;,&quot;defpap&quot;,
+		&quot;do&quot;,&quot;doccomm&quot;,&quot;docvar&quot;,&quot;dptxbxtext&quot;,&quot;ebcend&quot;,&quot;ebcstart&quot;,&quot;factoidname&quot;,&quot;falt&quot;,
+		&quot;fchars&quot;,&quot;ffdeftext&quot;,&quot;ffentrymcr&quot;,&quot;ffexitmcr&quot;,&quot;ffformat&quot;,&quot;ffhelptext&quot;,&quot;ffl&quot;,
+		&quot;ffname&quot;,&quot;ffstattext&quot;,&quot;field&quot;,&quot;file&quot;,&quot;filetbl&quot;,&quot;fldinst&quot;,&quot;fldrslt&quot;,&quot;fldtype&quot;,
+		&quot;fname&quot;,&quot;fontemb&quot;,&quot;fontfile&quot;,&quot;fonttbl&quot;,&quot;footer&quot;,&quot;footerf&quot;,&quot;footerl&quot;,&quot;footerr&quot;,
+		&quot;footnote&quot;,&quot;formfield&quot;,&quot;ftncn&quot;,&quot;ftnsep&quot;,&quot;ftnsepc&quot;,&quot;g&quot;,&quot;generator&quot;,&quot;gridtbl&quot;,
+		&quot;header&quot;,&quot;headerf&quot;,&quot;headerl&quot;,&quot;headerr&quot;,&quot;hl&quot;,&quot;hlfr&quot;,&quot;hlinkbase&quot;,&quot;hlloc&quot;,&quot;hlsrc&quot;,
+		&quot;hsv&quot;,&quot;htmltag&quot;,&quot;info&quot;,&quot;keycode&quot;,&quot;keywords&quot;,&quot;latentstyles&quot;,&quot;lchars&quot;,&quot;levelnumbers&quot;,
+		&quot;leveltext&quot;,&quot;lfolevel&quot;,&quot;linkval&quot;,&quot;list&quot;,&quot;listlevel&quot;,&quot;listname&quot;,&quot;listoverride&quot;,
+		&quot;listoverridetable&quot;,&quot;listpicture&quot;,&quot;liststylename&quot;,&quot;listtable&quot;,&quot;listtext&quot;,
+		&quot;lsdlockedexcept&quot;,&quot;macc&quot;,&quot;maccPr&quot;,&quot;mailmerge&quot;,&quot;maln&quot;,&quot;malnScr&quot;,&quot;manager&quot;,&quot;margPr&quot;,
+		&quot;mbar&quot;,&quot;mbarPr&quot;,&quot;mbaseJc&quot;,&quot;mbegChr&quot;,&quot;mborderBox&quot;,&quot;mborderBoxPr&quot;,&quot;mbox&quot;,&quot;mboxPr&quot;,
+		&quot;mchr&quot;,&quot;mcount&quot;,&quot;mctrlPr&quot;,&quot;md&quot;,&quot;mdeg&quot;,&quot;mdegHide&quot;,&quot;mden&quot;,&quot;mdiff&quot;,&quot;mdPr&quot;,&quot;me&quot;,
+		&quot;mendChr&quot;,&quot;meqArr&quot;,&quot;meqArrPr&quot;,&quot;mf&quot;,&quot;mfName&quot;,&quot;mfPr&quot;,&quot;mfunc&quot;,&quot;mfuncPr&quot;,&quot;mgroupChr&quot;,
+		&quot;mgroupChrPr&quot;,&quot;mgrow&quot;,&quot;mhideBot&quot;,&quot;mhideLeft&quot;,&quot;mhideRight&quot;,&quot;mhideTop&quot;,&quot;mhtmltag&quot;,
+		&quot;mlim&quot;,&quot;mlimloc&quot;,&quot;mlimlow&quot;,&quot;mlimlowPr&quot;,&quot;mlimupp&quot;,&quot;mlimuppPr&quot;,&quot;mm&quot;,&quot;mmaddfieldname&quot;,
+		&quot;mmath&quot;,&quot;mmathPict&quot;,&quot;mmathPr&quot;,&quot;mmaxdist&quot;,&quot;mmc&quot;,&quot;mmcJc&quot;,&quot;mmconnectstr&quot;,
+		&quot;mmconnectstrdata&quot;,&quot;mmcPr&quot;,&quot;mmcs&quot;,&quot;mmdatasource&quot;,&quot;mmheadersource&quot;,&quot;mmmailsubject&quot;,
+		&quot;mmodso&quot;,&quot;mmodsofilter&quot;,&quot;mmodsofldmpdata&quot;,&quot;mmodsomappedname&quot;,&quot;mmodsoname&quot;,
+		&quot;mmodsorecipdata&quot;,&quot;mmodsosort&quot;,&quot;mmodsosrc&quot;,&quot;mmodsotable&quot;,&quot;mmodsoudl&quot;,
+		&quot;mmodsoudldata&quot;,&quot;mmodsouniquetag&quot;,&quot;mmPr&quot;,&quot;mmquery&quot;,&quot;mmr&quot;,&quot;mnary&quot;,&quot;mnaryPr&quot;,
+		&quot;mnoBreak&quot;,&quot;mnum&quot;,&quot;mobjDist&quot;,&quot;moMath&quot;,&quot;moMathPara&quot;,&quot;moMathParaPr&quot;,&quot;mopEmu&quot;,
+		&quot;mphant&quot;,&quot;mphantPr&quot;,&quot;mplcHide&quot;,&quot;mpos&quot;,&quot;mr&quot;,&quot;mrad&quot;,&quot;mradPr&quot;,&quot;mrPr&quot;,&quot;msepChr&quot;,
+		&quot;mshow&quot;,&quot;mshp&quot;,&quot;msPre&quot;,&quot;msPrePr&quot;,&quot;msSub&quot;,&quot;msSubPr&quot;,&quot;msSubSup&quot;,&quot;msSubSupPr&quot;,&quot;msSup&quot;,
+		&quot;msSupPr&quot;,&quot;mstrikeBLTR&quot;,&quot;mstrikeH&quot;,&quot;mstrikeTLBR&quot;,&quot;mstrikeV&quot;,&quot;msub&quot;,&quot;msubHide&quot;,
+		&quot;msup&quot;,&quot;msupHide&quot;,&quot;mtransp&quot;,&quot;mtype&quot;,&quot;mvertJc&quot;,&quot;mvfmf&quot;,&quot;mvfml&quot;,&quot;mvtof&quot;,&quot;mvtol&quot;,
+		&quot;mzeroAsc&quot;,&quot;mzeroDesc&quot;,&quot;mzeroWid&quot;,&quot;nesttableprops&quot;,&quot;nextfile&quot;,&quot;nonesttables&quot;,
+		&quot;objalias&quot;,&quot;objclass&quot;,&quot;objdata&quot;,&quot;object&quot;,&quot;objname&quot;,&quot;objsect&quot;,&quot;objtime&quot;,&quot;oldcprops&quot;,
+		&quot;oldpprops&quot;,&quot;oldsprops&quot;,&quot;oldtprops&quot;,&quot;oleclsid&quot;,&quot;operator&quot;,&quot;panose&quot;,&quot;password&quot;,
+		&quot;passwordhash&quot;,&quot;pgp&quot;,&quot;pgptbl&quot;,&quot;picprop&quot;,&quot;pict&quot;,&quot;pn&quot;,&quot;pnseclvl&quot;,&quot;pntext&quot;,&quot;pntxta&quot;,
+		&quot;pntxtb&quot;,&quot;printim&quot;,&quot;private&quot;,&quot;propname&quot;,&quot;protend&quot;,&quot;protstart&quot;,&quot;protusertbl&quot;,&quot;pxe&quot;,
+		&quot;result&quot;,&quot;revtbl&quot;,&quot;revtim&quot;,&quot;rsidtbl&quot;,&quot;rxe&quot;,&quot;shp&quot;,&quot;shpgrp&quot;,&quot;shpinst&quot;,
+		&quot;shppict&quot;,&quot;shprslt&quot;,&quot;shptxt&quot;,&quot;sn&quot;,&quot;sp&quot;,&quot;staticval&quot;,&quot;stylesheet&quot;,&quot;subject&quot;,&quot;sv&quot;,
+		&quot;svb&quot;,&quot;tc&quot;,&quot;template&quot;,&quot;themedata&quot;,&quot;title&quot;,&quot;txe&quot;,&quot;ud&quot;,&quot;upr&quot;,&quot;userprops&quot;,
+		&quot;wgrffmtfilter&quot;,&quot;windowcaption&quot;,&quot;writereservation&quot;,&quot;writereservhash&quot;,&quot;xe&quot;,&quot;xform&quot;,
+		&quot;xmlattrname&quot;,&quot;xmlattrvalue&quot;,&quot;xmlclose&quot;,&quot;xmlname&quot;,&quot;xmlnstbl&quot;,
+		&quot;xmlopen&quot;
+	};
+
+	private static readonly Dictionary&lt;string, string&gt; specialCharacters = new Dictionary&lt;string, string&gt;
+	{
+		{ &quot;par&quot;, &quot;\n&quot; },
+		{ &quot;sect&quot;, &quot;\n\n&quot; },
+		{ &quot;page&quot;, &quot;\n\n&quot; },
+		{ &quot;line&quot;, &quot;\n&quot; },
+		{ &quot;tab&quot;, &quot;\t&quot; },
+		{ &quot;emdash&quot;, &quot;\u2014&quot; },
+		{ &quot;endash&quot;, &quot;\u2013&quot; },
+		{ &quot;emspace&quot;, &quot;\u2003&quot; },
+		{ &quot;enspace&quot;, &quot;\u2002&quot; },
+		{ &quot;qmspace&quot;, &quot;\u2005&quot; },
+		{ &quot;bullet&quot;, &quot;\u2022&quot; },
+		{ &quot;lquote&quot;, &quot;\u2018&quot; },
+		{ &quot;rquote&quot;, &quot;\u2019&quot; },
+		{ &quot;ldblquote&quot;, &quot;\u201C&quot; },
+		{ &quot;rdblquote&quot;, &quot;\u201D&quot; }, 
+	};
+	/// &lt;summary&gt;
+	/// Strip RTF Tags from RTF Text
+	/// &lt;/summary&gt;
+	/// &lt;param name=&quot;inputRtf&quot;&gt;RTF formatted text&lt;/param&gt;
+	/// &lt;returns&gt;Plain text from RTF&lt;/returns&gt;
+	public static string StripRichTextFormat(string inputRtf)
+	{
+		if (inputRtf == null)
+		{
+			return null;
+		}
+
+		string returnString;
+
+		var stack = new Stack&lt;StackEntry&gt;();
+		bool ignorable = false;              // Whether this group (and all inside it) are &quot;ignorable&quot;.
+		int ucskip = 1;                      // Number of ASCII characters to skip after a unicode character.
+		int curskip = 0;                     // Number of ASCII characters left to skip
+		var outList = new List&lt;string&gt;();    // Output buffer.
+
+		MatchCollection matches = _rtfRegex.Matches(inputRtf);
+
+		if (matches.Count &gt; 0)
+		{
+			foreach (Match match in matches)
+			{
+				string word = match.Groups[1].Value;
+				string arg = match.Groups[2].Value;
+				string hex = match.Groups[3].Value;
+				string character = match.Groups[4].Value;
+				string brace = match.Groups[5].Value;
+				string tchar = match.Groups[6].Value;
+
+				if (!String.IsNullOrEmpty(brace))
+				{
+					curskip = 0;
+					if (brace == &quot;{&quot;)
+					{
+						// Push state
+						stack.Push(new StackEntry(ucskip, ignorable));
+					}
+					else if (brace == &quot;}&quot;)
+					{
+						// Pop state
+						StackEntry entry = stack.Pop();
+						ucskip = entry.NumberOfCharactersToSkip;
+						ignorable = entry.Ignorable;
+					}
+				}
+				else if (!String.IsNullOrEmpty(character)) // \x (not a letter)
+				{
+					curskip = 0;
+					if (character == &quot;~&quot;)
+					{
+						if (!ignorable)
+						{
+							outList.Add(&quot;\xA0&quot;);
+						}
+					}
+					else if (&quot;{}\\&quot;.Contains(character))
+					{
+						if (!ignorable)
+						{
+							outList.Add(character);
+						}
+					}
+					else if (character == &quot;*&quot;)
+					{
+						ignorable = true;
+					}
+				}
+				else if (!String.IsNullOrEmpty(word)) // \foo
+				{
+					curskip = 0;
+					if (destinations.Contains(word))
+					{
+						ignorable = true;
+					}
+					else if (ignorable)
+					{
+					}
+					else if (specialCharacters.ContainsKey(word))
+					{
+						outList.Add(specialCharacters[word]);
+					}
+					else if (word == &quot;uc&quot;)
+					{
+						ucskip = Int32.Parse(arg);
+					}
+					else if (word == &quot;u&quot;)
+					{
+						int c = Int32.Parse(arg);
+						if (c &lt; 0)
+						{
+							c += 0x10000;
+						}
+						if (c &gt; 127)
+						{
+							outList.Add(Encoding.Unicode.GetString(BitConverter.GetBytes(c)));
+						}
+						else
+						{
+							outList.Add(Encoding.ASCII.GetString(BitConverter.GetBytes(c)));
+						}
+						curskip = ucskip;
+					}
+				}
+				else if (!String.IsNullOrEmpty(hex)) // \'xx
+				{
+					if (curskip &gt; 0)
+					{
+						curskip -= 1;
+					}
+					else if (!ignorable)
+					{
+						int c = Int32.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+						if (c &gt; 127)
+						{
+							outList.Add(Encoding.Unicode.GetString(BitConverter.GetBytes(c)));
+						}
+						else
+						{
+							outList.Add(Encoding.ASCII.GetString(BitConverter.GetBytes(c)));
+						}
+					}
+				}
+				else if (!String.IsNullOrEmpty(tchar))
+				{
+					if (curskip &gt; 0)
+					{
+						curskip -= 1;
+					}
+					else if (!ignorable)
+					{
+						outList.Add(tchar);
+					}
+				}
+			}
+		}
+		else
+		{
+			// Didn't match the regex
+			returnString = inputRtf;
+		}
+
+		returnString = String.Join(String.Empty, outList.ToArray());
+
+		return returnString;
+	}
+}</pre>
+      </div>
+    </div>
+  </div>
+</div>
