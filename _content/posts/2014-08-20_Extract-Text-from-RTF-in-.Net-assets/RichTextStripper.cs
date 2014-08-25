@@ -179,14 +179,7 @@ public static class RichTextStripper
 						{
 							c += 0x10000;
 						}
-						if (c > 127)
-						{
-							outList.Add(Encoding.Unicode.GetString(BitConverter.GetBytes(c)));
-						}
-						else
-						{
-							outList.Add(Encoding.ASCII.GetString(BitConverter.GetBytes(c)));
-						}
+						outList.Add(Char.ConvertFromUtf32(c));
 						curskip = ucskip;
 					}
 				}
@@ -199,14 +192,7 @@ public static class RichTextStripper
 					else if (!ignorable)
 					{
 						int c = Int32.Parse(hex, System.Globalization.NumberStyles.HexNumber);
-						if (c > 127)
-						{
-							outList.Add(Encoding.Unicode.GetString(BitConverter.GetBytes(c)));
-						}
-						else
-						{
-							outList.Add(Encoding.ASCII.GetString(BitConverter.GetBytes(c)));
-						}
+						outList.Add(Char.ConvertFromUtf32(c));
 					}
 				}
 				else if (!String.IsNullOrEmpty(tchar))
