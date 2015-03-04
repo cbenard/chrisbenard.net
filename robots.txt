@@ -8,3 +8,6 @@ Disallow: /forbidden
 Disallow: /pagenotfound
 Disallow: /forbidden/
 Disallow: /pagenotfound/
+
+User-agent: ia_archiver
+Disallow: /
