@@ -17,6 +17,9 @@ div.syntaxhighlighter > table, td, tr {
 a, a:hover, a:visited {
 	color: #4b87cf;
 }
+.alert a, .alert a:hover, .alert a:visited {
+  color: rgb(1, 99, 216);
+}
 pre {
     word-break: normal;
 }

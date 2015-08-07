@@ -8,6 +8,11 @@ tags: [ technology, personal ]
 ---
 ###Dilbert.com Hates Its Users
 <div class="clearfix">
+	<div class="alert">
+		<strong>Update:</strong> <a href="http://pipes.yqlblog.net/post/120705592639/pipes-end-of-life-announcement">Yahoo Pipes is shutting down</a>.
+		As a result, I started a <a href="https://github.com/cbenard/comicfeeds/">new software project</a> to replace it. The feeds
+		are updated below.
+	</div>
 	<div class="postimage well pull-right leftbottompad">
 		<a class="fancybox" data-fancybox-group="{{ page.slug }}" href="{{ assets['badfeed-crushed'] }}">
 			<img src="{{ assets['badfeed-small-crushed'] }}" alt="Bad RSS Feed with No Pictures" />
@@ -22,18 +27,24 @@ tags: [ technology, personal ]
 	<p>
 		<a href="http://penny-arcade.com">Penny-Arcade</a> did this quite a while back too, and
 		I've been using <a href="http://pipes.yahoo.com/pipes/pipe.info?_id=IjjUcuSa3RGmgXqp1L3fcQ&amp;_render=rss">someone's
-		Yahoo Pipe</a> that fixes this same problem. It just pulls the comic strip images from the page
+		Yahoo Pipe</a> that <del>fixes this same problem</del> <ins><em>unfortunately this pipe no longer worked anyway and is replaced below</em></ins>. It just pulls the comic strip images from the page
 		and displays it instead. I never dug into how it worked or <a href="http://pipes.yahoo.com">Yahoo Pipes</a>
 		at all.
 	</p>
 	<p>
-		Yahoo Pipes is pretty awesome. It lets you just drag and drop things and connect them
+		<del>Yahoo Pipes is pretty awesome. It lets you just drag and drop things and connect them
 		to arrange a workflow. <a href="{{ pcurl('about/') }}">I'm a developer</a>, but I don't think
-		you have to be to use Pipes.
+		you have to be to use Pipes.</del>
 	</p>
 	<p>
-		Using the Penny-Arcade one as an example, I rigged up two versions of the Dilbert.com feed.
+		<del>Using the Penny-Arcade one as an example, I rigged up two versions of the Dilbert.com feed.</del>
 	</p>
+	<p>
+		Using my Google App Engine hosted <a href="https://github.com/cbenard/comicfeeds/">new software project</a>,
+		I've replaced and added new feeds below. The feeds auto-update every 2 hours and the service serves cached
+		copies, so it should be extremely fast compared to the old pipes feeds.
+	</p>
+	<!--
 	<ul>
 		<li>
 			<h4>Large Image Version</h4>
@@ -64,10 +75,31 @@ tags: [ technology, personal ]
 				<li><strong><a href="http://pipes.yahoo.com/pipes/pipe.run?_id=1f33f50b7e2a1162758e9061a16cca83&amp;_render=rss">RSS Link</a></strong> (what you need to add the subscription in your reader)</li>
 			</ul>
 		</li>
+	</ul> -->
+	<ul>
+		<li>
+			<h4>Dilbert</h4>
+			<ul>
+				<li><a href="http://comicfeeds.chrisbenard.net/view/dilbert/default">Modified Atom Feed</a></li>
+				<li><a href="http://comicfeeds.chrisbenard.net/view/dilbert/rss">Transformed (from Atom) Modified RSS Feed</a>. This is a hack. Only use this if you have programmatic requirements requiring RSS over Atom.</li>
+			</ul>
+		</li>
+		<li>
+			<h4>Penny-Arcade</h4>
+			<ul>
+				<li><a href="http://comicfeeds.chrisbenard.net/view/pennyarcade/default">Modified RSS Feed</a></li>
+			</ul>
+		</li>
+		<li>
+			<h4>W.T. Duck</h4>
+			<ul>
+				<li><a href="http://comicfeeds.chrisbenard.net/view/wtduck/default">Modified RSS Feed</a>. This was requested by a reader previously.</li>
+			</ul>
+		</li>
 	</ul>
 </div>
 
-###What It Looks Like Now With These Pipes
+###What It Looks Like Now With These Modified Feeds
 
 <div class="postimage well pull-left rightbottompad">
 	<a class="fancybox" data-fancybox-group="{{ page.slug }}" href="{{ assets['theoldreader-screenshot-crushed'] }}">
@@ -76,8 +108,9 @@ tags: [ technology, personal ]
 </div>
 
 <p>
-	By the way: I'm using a great <a href="http://userstyles.org/styles/87977/the-old-reader-blue-accent">Blue User Style</a> in Chrome. I like the blue a lot better than TheOldReader's default sea green.
+	I no longer use The Old Reader. I now use <a href="https://newsblur.com">NewsBlur</a> and I pay for a premium subscription.
+	I find it to be the best news reader for serious RSS users now. You can <a href="https://cbenard.newsblur.com/">follow me there</a>.
 </p>
 <p>
-	Now you get Dilbert back the way it used to be and don't have to link out to the site to read it. I still left each image as a link to the post's page on <a href="http://dilbert.com">Dilbert.com</a>.
+	Now you get comics back the way they used to be (including images) and don't have to link out to the site to read it. You can click the title in your feed reader to open the comic's page (for discussion or other purposes).
 </p>
